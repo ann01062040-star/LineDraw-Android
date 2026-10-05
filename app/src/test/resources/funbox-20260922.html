@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Funbox / 來玩聚 LINE 官方帳號一鍵抽獎</title>
+<style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; color: #333; }
+        h1 { text-align: center; font-size: 20px; color: #1f497d; margin-bottom: 5px; }
+        p.subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 20px; }
+        .filter-btn-group { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-btn { padding: 8px 16px; border: none; background: #e0e0e0; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .filter-btn.active { background: #00c300; color: white; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 12px 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .card-info { display: flex; flex-direction: column; }
+        .store-name { font-size: 15px; font-weight: bold; margin: 2px 0; color: #222; }
+        .line-id { font-size: 12px; color: #666; }
+        .add-btn { background-color: #00c300; color: white; text-decoration: none; font-weight: bold; padding: 8px 14px; border-radius: 8px; font-size: 13px; white-space: nowrap; transition: background 0.2s; }
+        .add-btn.clicked { background-color: #a0a0a0 !important; }
+
+    
+        .page-tabs { display:flex; justify-content:center; gap:10px; margin:8px auto 18px; flex-wrap:wrap; }
+        .page-tab { padding:9px 18px; border:0; border-radius:20px; background:#e0e0e0; font-weight:bold; cursor:pointer; }
+        .page-tab.active { background:#1f497d; color:white; }
+        .draw-filter-btn-group { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+        .draw-list { max-width:1000px; margin:0 auto; }
+        .draw-city { font-size:18px; font-weight:bold; color:#1f497d; margin:22px 0 10px; padding-bottom:6px; border-bottom:2px solid #1f497d; }
+        .draw-store { background:white; border-radius:12px; padding:14px 16px; margin-bottom:12px; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
+        .draw-store-name { font-size:16px; font-weight:bold; color:#222; }
+        .draw-start { font-size:13px; color:#666; margin:5px 0 10px; }
+        .draw-item { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid #eee; }
+        .draw-product { font-size:14px; }
+        .draw-link { background:#00c300; color:white; text-decoration:none; font-weight:bold; padding:6px 12px; border-radius:7px; font-size:12px; white-space:nowrap; }
+        .draw-link.not-started {
+    background-color: #d9d9d9 !important;
+    color: #999 !important;
+    border-color: #d0d0d0 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.draw-link.clicked {
+            background-color: #a0a0a0 !important;
+            color: white !important;
+        }
+
+
+        .draw-main-title {
+            text-align: center;
+            font-size: 30px;
+            color: #1f497d;
+            margin: 8px 0 6px;
+            font-weight: 800;
+        }
+        .draw-reminder {
+            text-align: center;
+            font-size: 20px !important;
+            color: #d35400 !important;
+            font-weight: 700;
+            margin: 0 auto 20px !important;
+        }
+    
+/* ===== 連續抽選模式 V2 ===== */
+.continuous-draw-panel {
+    max-width: 720px;
+    margin: 18px auto 22px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    text-align: center;
+}
+.continuous-draw-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1f497d;
+    margin: 0 0 8px;
+}
+.continuous-draw-progress {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+.continuous-draw-store {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+}
+.continuous-draw-product {
+    font-size: 21px;
+    font-weight: 800;
+    color: #222;
+    margin: 6px 0 14px;
+    word-break: break-word;
+}
+.continuous-draw-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+.continuous-draw-open,
+.continuous-draw-next,
+.continuous-draw-skip {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 10px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.continuous-draw-open {
+    grid-column: 1 / -1;
+    background: #00c300;
+    color: #fff;
+}
+.continuous-draw-next {
+    background: #1f497d;
+    color: #fff;
+}
+.continuous-draw-skip {
+    background: #e0e0e0;
+    color: #222;
+}
+.continuous-draw-open:active,
+.continuous-draw-next:active,
+.continuous-draw-skip:active {
+    transform: translateY(1px);
+}
+@media (max-width: 520px) {
+    .continuous-draw-panel {
+        padding: 14px;
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+    .continuous-draw-product {
+        font-size: 19px;
+    }
+}
+
+    
+/* ===== Funbox 連續抽選模式 V4 ===== */
+.continuous-draw-panel{max-width:720px;margin:18px auto 22px;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.continuous-draw-title{text-align:center;font-size:20px;font-weight:800;color:#1f497d;margin-bottom:10px}
+.continuous-draw-label{text-align:center;font-size:13px;color:#666;margin:8px 0 6px}
+.continuous-draw-scopes{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:12px}
+.continuous-draw-scope{border:0;border-radius:999px;padding:8px 13px;background:#e5e5e5;color:#222;font-weight:700;cursor:pointer}
+.continuous-draw-scope.active{background:#00c300;color:#fff}
+.continuous-draw-progress{text-align:center;font-size:14px;color:#666;margin:8px 0 3px}
+.continuous-draw-store{text-align:center;font-size:14px;color:#666}
+.continuous-draw-product{text-align:center;font-size:21px;font-weight:800;color:#222;margin:6px 0 14px;word-break:break-word}
+.continuous-draw-open,.continuous-draw-next,.continuous-draw-stop{width:100%;border:0;border-radius:9px;padding:12px 10px;font-size:15px;font-weight:800;cursor:pointer}
+.continuous-draw-open{background:#00c300;color:#fff;margin-bottom:9px}
+.continuous-draw-next{background:#1f497d;color:#fff;margin-bottom:9px}
+.continuous-draw-stop{background:#d9534f;color:#fff}
+.continuous-draw-open:disabled,.continuous-draw-next:disabled,.continuous-draw-stop:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:520px){.continuous-draw-panel{margin-left:2px;margin-right:2px;padding:14px}.continuous-draw-product{font-size:19px}.continuous-draw-scope{padding:7px 11px;font-size:13px}}
+
+
+/* ===== 連續抽選已完成狀態 ===== */
+.draw-item.quick-drawn .draw-link {
+    background: #d9d9d9 !important;
+    color: #999 !important;
+    border-color: #d0d0d0 !important;
+    text-align: center;
+}
+
+
+.continuous-draw-guide{
+    margin:10px 0 12px;
+    padding:10px 12px;
+    border-radius:9px;
+    background:#f5f5f5;
+    color:#444;
+    font-size:13px;
+    line-height:1.7;
+    text-align:left;
+}
+.continuous-draw-guide strong{
+    display:block;
+    margin-bottom:3px;
+    font-size:14px;
+    color:#222;
+}
+
+
+.draw-title-wrap {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.draw-last-updated {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+}
+@media (max-width: 600px) {
+    .draw-title-wrap {
+        padding-top: 18px;
+    }
+    .draw-last-updated {
+        top: 3px;
+        right: 8px;
+        transform: none;
+        font-size: 11px;
+    }
+}
+
+.time-filter-wrap {
+    margin-top: 10px;
+}
+.time-filter-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+.time-filter-btn {
+    min-width: 68px;
+}
+@media (max-width: 600px) {
+    .time-filter-btn-group {
+        gap: 6px;
+    }
+    .time-filter-btn {
+        min-width: 62px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+/* 商品篩選與時間篩選垂直排列並對齊 */
+.draw-secondary-filters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 14px auto 16px;
+    width: fit-content;
+    max-width: 100%;
+}
+.draw-secondary-filters .product-filter-wrap,
+.draw-secondary-filters .time-filter-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin: 0 !important;
+    width: 100%;
+}
+.draw-secondary-filters .product-filter-label {
+    min-width: 70px;
+    text-align: right;
+    margin: 0;
+}
+.draw-secondary-filters .time-filter-btn-group {
+    margin-top: 0;
+}
+@media (max-width: 600px) {
+    .draw-secondary-filters {
+        width: 100%;
+        align-items: stretch;
+        padding: 0 12px;
+        box-sizing: border-box;
+    }
+    .draw-secondary-filters .product-filter-label {
+        min-width: 64px;
+        flex: 0 0 64px;
+    }
+    .draw-secondary-filters .product-filter-select {
+        flex: 1;
+        min-width: 0;
+    }
+    .draw-secondary-filters .time-filter-btn-group {
+        flex: 1;
+    }
+}
+
+.draw-top-notice {
+    position: absolute;
+    right: 8px;
+    top: calc(50% + 20px);
+    transform: translateY(-50%);
+    text-align: right;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #666;
+    white-space: nowrap;
+}
+.draw-top-notice strong {
+    color: #a33;
+}
+@media (max-width: 600px) {
+    .draw-title-wrap {
+        padding-top: 56px;
+    }
+    .draw-last-updated {
+        top: 3px;
+        right: 8px;
+        transform: none;
+    }
+    .draw-top-notice {
+        top: 22px;
+        right: 8px;
+        transform: none;
+        font-size: 11px;
+    }
+}
+
+/* 右側「目前缺少」提醒卡 */
+.draw-missing-box {
+    width: 275px;
+    max-width: calc(100% - 24px);
+    margin: 10px 0 10px auto;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    box-shadow: 0 2px 7px rgba(0,0,0,.10);
+    box-sizing: border-box;
+    color: #222;
+}
+.draw-missing-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.draw-missing-box ul {
+    margin: 0;
+    padding-left: 20px;
+}
+.draw-missing-box li {
+    margin: 4px 0;
+    line-height: 1.45;
+}
+@media (max-width: 600px) {
+    .draw-missing-box {
+        width: 100%;
+        margin: 10px 0 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .draw-title-wrap {
+        padding-top: 18px;
+    }
+}
+</style>
+<style>
+#missing-store-panel{
+  position:static;
+  width:100%; max-width:100%; margin:0 0 12px 0;
+  background:rgba(255,255,255,.97);
+  border:1px solid #d8d8d8; border-radius:12px;
+  box-shadow:0 4px 18px rgba(0,0,0,.16);
+  font-family:inherit;
+}
+#missing-store-panel summary{
+  cursor:pointer; list-style:none; padding:10px 12px;
+  font-weight:700; font-size:14px; color:#222;
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+}
+#missing-store-panel summary::-webkit-details-marker{display:none}
+#missing-store-panel .missing-count{
+  background:#ef4444; color:white; border-radius:999px;
+  padding:2px 8px; font-size:12px; white-space:nowrap;
+}
+#missing-store-panel .missing-store-list{
+  max-height:60vh; overflow:auto; border-top:1px solid #eee;
+  padding:8px 12px 10px; margin:0;
+}
+#missing-store-panel .missing-store-item{
+  padding:5px 0; border-bottom:1px dashed #eee;
+  font-size:13px; line-height:1.35;
+}
+#missing-store-panel .missing-store-item:last-child{border-bottom:0}
+#missing-store-panel .missing-note{
+  padding:0 12px 9px; font-size:12px; color:#666;
+}
+@media (max-width:700px){
+  #missing-store-panel{margin-bottom:10px}
+}
+</style><style>
+.product-filter-wrap{
+    max-width:1000px;
+    margin:-6px auto 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+.product-filter-label{
+    font-size:14px;
+    font-weight:700;
+    color:#1f497d;
+}
+.product-filter-select{
+    min-width:180px;
+    max-width:260px;
+    padding:9px 12px;
+    border:1px solid #cfd6df;
+    border-radius:10px;
+    background:#fff;
+    color:#222;
+    font-size:14px;
+    font-weight:700;
+}
+@media(max-width:520px){
+    .product-filter-wrap{
+        margin-top:-4px;
+        padding:0 2px;
+    }
+    .product-filter-select{
+        flex:1;
+        min-width:0;
+    }
+}
+</style><style>
+.draw-item-clickable{
+    cursor:pointer;
+    border-radius:8px;
+    padding-left:8px;
+    padding-right:8px;
+    transition:background-color .15s ease, transform .05s ease;
+}
+.draw-item-clickable:hover{background:#f3f7fb;}
+.draw-item-clickable:active{transform:translateY(1px);}
+.draw-item-clickable:focus-visible{
+    outline:2px solid #1f497d;
+    outline-offset:2px;
+}
+.draw-item-clickable.quick-drawn,
+.draw-item-clickable:has(.draw-link.clicked){
+    background:#f2f2f2;
+}
+@media(max-width:520px){
+    .draw-item-clickable{
+        padding-top:9px;
+        padding-bottom:9px;
+    }
+}
+</style><style>
+/* ===== 手動抽 / 快速抽 已完成顏色統一 ===== */
+#page-draws .draw-item.quick-drawn .draw-link,
+#page-draws .draw-link.clicked {
+    background-color:#a0a0a0 !important;
+    color:#fff !important;
+    border-color:#a0a0a0 !important;
+}
+#page-draws .draw-item.quick-drawn,
+#page-draws .draw-item-clickable:has(.draw-link.clicked) {
+    background:#f2f2f2 !important;
+}
+</style><style>
+/* Mobile alignment fix for top-right "目前缺少" box */
+.draw-missing-box {
+    box-sizing: border-box;
+}
+.draw-missing-box > div:not(.draw-missing-title) {
+    display: block;
+    text-align: left;
+    line-height: 1.55;
+    margin: 4px 0;
+    padding: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.draw-missing-title {
+    text-align: left;
+}
+@media (max-width: 768px) {
+    .draw-missing-box {
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
+    }
+    .draw-missing-box > div,
+    .draw-missing-box > div:not(.draw-missing-title) {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+</style><style>
+.draw-missing-box .draw-missing-row{
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    margin:6px 0 0 0;
+    padding:0;
+    text-align:left;
+    line-height:1.5;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+@media (max-width:768px){
+    .draw-missing-box{
+        width:100%;
+        max-width:100%;
+        margin-left:0;
+        margin-right:0;
+        padding-left:14px;
+        padding-right:14px;
+        text-align:left;
+    }
+    .draw-missing-box .draw-missing-title,
+    .draw-missing-box .draw-missing-row{
+        display:block;
+        width:100%;
+        margin-left:0 !important;
+        margin-right:0 !important;
+        text-align:left !important;
+    }
+}
+</style><style>
+.draw-missing-box .draw-missing-list{
+    list-style:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:100%;
+}
+.draw-missing-box .draw-missing-list > li{
+    display:list-item !important;
+    width:100% !important;
+    box-sizing:border-box;
+    margin:7px 0 0 0 !important;
+    padding:0 !important;
+    text-align:left !important;
+    line-height:1.5;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+@media (max-width:768px){
+    .draw-missing-box{
+        width:100% !important;
+        max-width:100% !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
+        text-align:left !important;
+    }
+    .draw-missing-box .draw-missing-title,
+    .draw-missing-box .draw-missing-list,
+    .draw-missing-box .draw-missing-list > li{
+        text-align:left !important;
+    }
+}
+
+/* ===== 抽選模式切換 ===== */
+.draw-mode-panel {
+    max-width: 720px;
+    margin: 12px auto 16px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.draw-mode-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #1f497d;
+    margin-bottom: 9px;
+}
+.draw-mode-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.draw-mode-btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    background: #e5e5e5;
+    color: #333;
+}
+.draw-mode-btn.active {
+    background: #1f497d;
+    color: #fff;
+}
+.draw-mode-btn.auto.active {
+    background: #00a83b;
+}
+.draw-mode-desc {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #666;
+}
+@media (max-width: 520px) {
+    .draw-mode-panel { margin-left: 2px; margin-right: 2px; }
+    .draw-mode-btn { font-size: 13px; padding: 10px 7px; }
+}
+</style><style>
+/* 讓時間篩選按鈕與縣市篩選按鈕視覺一致 */
+#page-draws .time-filter-btn{
+    appearance:none;
+    -webkit-appearance:none;
+    border:none;
+    border-radius:999px;
+    background:#e6e6e6;
+    color:#1687e8;
+    font-weight:700;
+    font-size:16px;
+    line-height:1;
+    padding:12px 22px;
+    min-width:auto;
+    height:auto;
+    cursor:pointer;
+    box-sizing:border-box;
+    box-shadow:none;
+    transition:background .15s ease, color .15s ease, transform .05s ease;
+}
+#page-draws .time-filter-btn:hover{
+    filter:brightness(.98);
+}
+#page-draws .time-filter-btn:active{
+    transform:scale(.98);
+}
+#page-draws .time-filter-btn.active{
+    background:#00c600;
+    color:#fff;
+}
+#page-draws .time-filter-btn-group,
+#page-draws .draw-time-filter-btn-group{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+@media (max-width:768px){
+    #page-draws .time-filter-btn{
+        font-size:15px;
+        padding:11px 18px;
+    }
+}
+</style></head>
+<body>
+<h1 id="stores-title" style="display:none;; display:none !important">LINE 門市帳號一鍵快速加好友</h1>
+<p class="subtitle" id="stores-subtitle" style="display:none;; display:none !important">上方可直接依縣市篩選門市；點擊右側按鈕會開啟 LINE App 加好友（已點過會自動變灰色）</p>
+<div class="filter-btn-group" style="display:none;; display:none !important">
+<button class="filter-btn active" onclick="filterRegion('all', this)">全部 (77)</button>
+<button class="filter-btn" onclick="filterRegion('台北市', this)">台北市 (12)</button><button class="filter-btn" onclick="filterRegion('新北市', this)">新北市 (9)</button><button class="filter-btn" onclick="filterRegion('桃園市', this)">桃園市 (7)</button><button class="filter-btn" onclick="filterRegion('新竹市', this)">新竹市 (3)</button><button class="filter-btn" onclick="filterRegion('新竹縣', this)">新竹縣 (2)</button><button class="filter-btn" onclick="filterRegion('苗栗縣', this)">苗栗縣 (1)</button><button class="filter-btn" onclick="filterRegion('台中市', this)">台中市 (11)</button><button class="filter-btn" onclick="filterRegion('彰化縣', this)">彰化縣 (2)</button><button class="filter-btn" onclick="filterRegion('雲林縣', this)">雲林縣 (1)</button><button class="filter-btn" onclick="filterRegion('嘉義市', this)">嘉義市 (3)</button><button class="filter-btn" onclick="filterRegion('台南市', this)">台南市 (5)</button><button class="filter-btn" onclick="filterRegion('高雄市', this)">高雄市 (13)</button><button class="filter-btn" onclick="filterRegion('屏東縣', this)">屏東縣 (3)</button><button class="filter-btn" onclick="filterRegion('宜蘭縣', this)">宜蘭縣 (1)</button><button class="filter-btn" onclick="filterRegion('花蓮縣', this)">花蓮縣 (1)</button><button class="filter-btn" onclick="filterRegion('台東縣', this)">台東縣 (2)</button><button class="filter-btn" onclick="filterRegion('澎湖縣', this)">澎湖縣 (1)</button></div>
+<div class="grid" id="storeGrid" style="display:none;; display:none !important">
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">台北地下街16號</div><span class="line-id">@453cqkyj</span></div><a class="add-btn" href="https://line.me/ti/p/~@453cqkyj" id="btn-453cqkyj" onclick="markVisited('453cqkyj')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">新楠家樂福</div><span class="line-id">@022itqlw</span></div><a class="add-btn" href="https://line.me/ti/p/~@022itqlw" id="btn-022itqlw" onclick="markVisited('022itqlw')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台南市"><div class="card-info"><div class="store-name">台南新仁家樂福</div><span class="line-id">@162fxyom</span></div><a class="add-btn" href="https://line.me/ti/p/~@162fxyom" id="btn-162fxyom" onclick="markVisited('162fxyom')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="彰化縣"><div class="card-info"><div class="store-name">彰化家樂福</div><span class="line-id">@766sgllj</span></div><a class="add-btn" href="https://line.me/ti/p/~@766sgllj" id="btn-766sgllj" onclick="markVisited('766sgllj')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="彰化縣"><div class="card-info"><div class="store-name">員林大潤發</div><span class="line-id">@958tzuco</span></div><a class="add-btn" href="https://line.me/ti/p/~@958tzuco" id="btn-958tzuco" onclick="markVisited('958tzuco')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="雲林縣"><div class="card-info"><div class="store-name">斗六家樂福</div><span class="line-id">@rsp8657s</span></div><a class="add-btn" href="https://line.me/ti/p/~@rsp8657s" id="btn-rsp8657s" onclick="markVisited('rsp8657s')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">鳳山家樂福</div><span class="line-id">@189yvcce</span></div><a class="add-btn" href="https://line.me/ti/p/~@189yvcce" id="btn-189yvcce" onclick="markVisited('189yvcce')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">楠梓家樂福</div><span class="line-id">@241cmnww</span></div><a class="add-btn" href="https://line.me/ti/p/~@241cmnww" id="btn-241cmnww" onclick="markVisited('241cmnww')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="屏東縣"><div class="card-info"><div class="store-name">新屏家樂福</div><span class="line-id">@308oaews</span></div><a class="add-btn" href="https://line.me/ti/p/~@308oaews" id="btn-308oaews" onclick="markVisited('308oaews')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">台北忠孝遠東SOGO</div><span class="line-id">@lcn7452p</span></div><a class="add-btn" href="https://line.me/ti/p/~@lcn7452p" id="btn-lcn7452p" onclick="markVisited('lcn7452p')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">三越南西</div><span class="line-id">@626iceit</span></div><a class="add-btn" href="https://line.me/ti/p/~@626iceit" id="btn-626iceit" onclick="markVisited('626iceit')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">三越站前</div><span class="line-id">@631ovgxp</span></div><a class="add-btn" href="https://line.me/ti/p/~@631ovgxp" id="btn-631ovgxp" onclick="markVisited('631ovgxp')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">天母SOGO</div><span class="line-id">@377cbfue</span></div><a class="add-btn" href="https://line.me/ti/p/~@377cbfue" id="btn-377cbfue" onclick="markVisited('377cbfue')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">高島屋百貨</div><span class="line-id">@xbm4599s</span></div><a class="add-btn" href="https://line.me/ti/p/~@xbm4599s" id="btn-xbm4599s" onclick="markVisited('xbm4599s')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">比漾廣場</div><span class="line-id">@ufq5307a</span></div><a class="add-btn" href="https://line.me/ti/p/~@ufq5307a" id="btn-ufq5307a" onclick="markVisited('ufq5307a')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">桃園站前</div><span class="line-id">@fcm1241y</span></div><a class="add-btn" href="https://line.me/ti/p/~@fcm1241y" id="btn-fcm1241y" onclick="markVisited('fcm1241y')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">桃園遠東</div><span class="line-id">@bix0595a</span></div><a class="add-btn" href="https://line.me/ti/p/~@bix0595a" id="btn-bix0595a" onclick="markVisited('bix0595a')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">信義新天地A8館</div><span class="line-id">@983dfazy</span></div><a class="add-btn" href="https://line.me/ti/p/~@983dfazy" id="btn-983dfazy" onclick="markVisited('983dfazy')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新竹市"><div class="card-info"><div class="store-name">新竹遠東</div><span class="line-id">@822rfnmr</span></div><a class="add-btn" href="https://line.me/ti/p/~@822rfnmr" id="btn-822rfnmr" onclick="markVisited('822rfnmr')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">中壢SOGO</div><span class="line-id">@xcs3672w</span></div><a class="add-btn" href="https://line.me/ti/p/~@xcs3672w" id="btn-xcs3672w" onclick="markVisited('xcs3672w')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">板橋遠東</div><span class="line-id">@083zoknr</span></div><a class="add-btn" href="https://line.me/ti/p/~@083zoknr" id="btn-083zoknr" onclick="markVisited('083zoknr')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">中和環球</div><span class="line-id">@zgq9395a</span></div><a class="add-btn" href="https://line.me/ti/p/~@zgq9395a" id="btn-zgq9395a" onclick="markVisited('zgq9395a')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">板橋大遠百</div><span class="line-id">@585clqqg</span></div><a class="add-btn" href="https://line.me/ti/p/~@585clqqg" id="btn-585clqqg" onclick="markVisited('585clqqg')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新竹市"><div class="card-info"><div class="store-name">新竹巨城</div><span class="line-id">@532otwmb</span></div><a class="add-btn" href="https://line.me/ti/p/~@532otwmb" id="btn-532otwmb" onclick="markVisited('532otwmb')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">美麗華</div><span class="line-id">@660hextn</span></div><a class="add-btn" href="https://line.me/ti/p/~@660hextn" id="btn-660hextn" onclick="markVisited('660hextn')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">中壢大江</div><span class="line-id">@099ldnvw</span></div><a class="add-btn" href="https://line.me/ti/p/~@099ldnvw" id="btn-099ldnvw" onclick="markVisited('099ldnvw')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="宜蘭縣"><div class="card-info"><div class="store-name">新月廣場</div><span class="line-id">@027iendl</span></div><a class="add-btn" href="https://line.me/ti/p/~@027iendl" id="btn-027iendl" onclick="markVisited('027iendl')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">潤泰南港車站店</div><span class="line-id">@924tguor</span></div><a class="add-btn" href="https://line.me/ti/p/~@924tguor" id="btn-924tguor" onclick="markVisited('924tguor')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="苗栗縣"><div class="card-info"><div class="store-name">苗栗尚順</div><span class="line-id">@185vowmo</span></div><a class="add-btn" href="https://line.me/ti/p/~@185vowmo" id="btn-185vowmo" onclick="markVisited('185vowmo')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">汐科遠雄</div><span class="line-id">@mhb3876c</span></div><a class="add-btn" href="https://line.me/ti/p/~@mhb3876c" id="btn-mhb3876c" onclick="markVisited('mhb3876c')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">桃園環球A8</div><span class="line-id">@lae4656h</span></div><a class="add-btn" href="https://line.me/ti/p/~@lae4656h" id="btn-lae4656h" onclick="markVisited('lae4656h')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新竹市"><div class="card-info"><div class="store-name">新竹遠雄湳雅</div><span class="line-id">@agl4214l</span></div><a class="add-btn" href="https://line.me/ti/p/~@agl4214l" id="btn-agl4214l" onclick="markVisited('agl4214l')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">樹林秀泰</div><span class="line-id">@046txnme</span></div><a class="add-btn" href="https://line.me/ti/p/~@046txnme" id="btn-046txnme" onclick="markVisited('046txnme')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">淡水禮萊廣場</div><span class="line-id">@944creff</span></div><a class="add-btn" href="https://line.me/ti/p/~@944creff" id="btn-944creff" onclick="markVisited('944creff')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">天母三越</div><span class="line-id">@237annfd</span></div><a class="add-btn" href="https://line.me/ti/p/~@237annfd" id="btn-237annfd" onclick="markVisited('237annfd')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">遠百信義A13</div><span class="line-id">@020sqlyp</span></div><a class="add-btn" href="https://line.me/ti/p/~@020sqlyp" id="btn-020sqlyp" onclick="markVisited('020sqlyp')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">台茂購物中心</div><span class="line-id">@504tdsbb</span></div><a class="add-btn" href="https://line.me/ti/p/~@504tdsbb" id="btn-504tdsbb" onclick="markVisited('504tdsbb')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">宏匯廣場</div><span class="line-id">@513vgbqo</span></div><a class="add-btn" href="https://line.me/ti/p/~@513vgbqo" id="btn-513vgbqo" onclick="markVisited('513vgbqo')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="桃園市"><div class="card-info"><div class="store-name">桃園環球A19</div><span class="line-id">@403qwxdn</span></div><a class="add-btn" href="https://line.me/ti/p/~@403qwxdn" id="btn-403qwxdn" onclick="markVisited('403qwxdn')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新竹縣"><div class="card-info"><div class="store-name">竹北遠東</div><span class="line-id">@642vdyvq</span></div><a class="add-btn" href="https://line.me/ti/p/~@642vdyvq" id="btn-642vdyvq" onclick="markVisited('642vdyvq')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新竹縣"><div class="card-info"><div class="store-name">新竹享平方</div><span class="line-id">@062qoqex</span></div><a class="add-btn" href="https://line.me/ti/p/~@062qoqex" id="btn-062qoqex" onclick="markVisited('062qoqex')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="新北市"><div class="card-info"><div class="store-name">新店裕隆城</div><span class="line-id">@491uicsm</span></div><a class="add-btn" href="https://line.me/ti/p/~@491uicsm" id="btn-491uicsm" onclick="markVisited('491uicsm')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台北市"><div class="card-info"><div class="store-name">南港LaLaport</div><span class="line-id">@924ngwfb</span></div><a class="add-btn" href="https://line.me/ti/p/~@924ngwfb" id="btn-924ngwfb" onclick="markVisited('924ngwfb')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中中友</div><span class="line-id">@815dstuy</span></div><a class="add-btn" href="https://line.me/ti/p/~@815dstuy" id="btn-815dstuy" onclick="markVisited('815dstuy')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">豐原太平洋</div><span class="line-id">@094mvrhb</span></div><a class="add-btn" href="https://line.me/ti/p/~@094mvrhb" id="btn-094mvrhb" onclick="markVisited('094mvrhb')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中遠東</div><span class="line-id">@147vfxjr</span></div><a class="add-btn" href="https://line.me/ti/p/~@147vfxjr" id="btn-147vfxjr" onclick="markVisited('147vfxjr')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">廣三SOGO</div><span class="line-id">@526bsjmb</span></div><a class="add-btn" href="https://line.me/ti/p/~@526bsjmb" id="btn-526bsjmb" onclick="markVisited('526bsjmb')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中三越</div><span class="line-id">@833rhkmr</span></div><a class="add-btn" href="https://line.me/ti/p/~@833rhkmr" id="btn-833rhkmr" onclick="markVisited('833rhkmr')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="嘉義市"><div class="card-info"><div class="store-name">嘉義遠東</div><span class="line-id">@gno1826d</span></div><a class="add-btn" href="https://line.me/ti/p/~@gno1826d" id="btn-gno1826d" onclick="markVisited('gno1826d')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="嘉義市"><div class="card-info"><div class="store-name">嘉義耐斯</div><span class="line-id">@121nsdww</span></div><a class="add-btn" href="https://line.me/ti/p/~@121nsdww" id="btn-121nsdww" onclick="markVisited('121nsdww')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="嘉義市"><div class="card-info"><div class="store-name">嘉義三越</div><span class="line-id">@zhj4962p</span></div><a class="add-btn" href="https://line.me/ti/p/~@zhj4962p" id="btn-zhj4962p" onclick="markVisited('zhj4962p')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中新時代</div><span class="line-id">@hdg3289a</span></div><a class="add-btn" href="https://line.me/ti/p/~@hdg3289a" id="btn-hdg3289a" onclick="markVisited('hdg3289a')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">文心秀泰</div><span class="line-id">@605dilqq</span></div><a class="add-btn" href="https://line.me/ti/p/~@605dilqq" id="btn-605dilqq" onclick="markVisited('605dilqq')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">麗寶一期</div><span class="line-id">@829adhop</span></div><a class="add-btn" href="https://line.me/ti/p/~@829adhop" id="btn-829adhop" onclick="markVisited('829adhop')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中港三井</div><span class="line-id">@816xpruh</span></div><a class="add-btn" href="https://line.me/ti/p/~@816xpruh" id="btn-816xpruh" onclick="markVisited('816xpruh')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中Lalaport</div><span class="line-id">@620dfrfm</span></div><a class="add-btn" href="https://line.me/ti/p/~@620dfrfm" id="btn-620dfrfm" onclick="markVisited('620dfrfm')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台中市"><div class="card-info"><div class="store-name">台中漢神洲際</div><span class="line-id">@218xxrbx</span></div><a class="add-btn" href="https://line.me/ti/p/~@218xxrbx" id="btn-218xxrbx" onclick="markVisited('218xxrbx')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">高雄漢神</div><span class="line-id">@897upgfr</span></div><a class="add-btn" href="https://line.me/ti/p/~@897upgfr" id="btn-897upgfr" onclick="markVisited('897upgfr')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">崇光高雄</div><span class="line-id">@845nallq</span></div><a class="add-btn" href="https://line.me/ti/p/~@845nallq" id="btn-845nallq" onclick="markVisited('845nallq')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="屏東縣"><div class="card-info"><div class="store-name">屏東太平洋</div><span class="line-id">@ess7711t</span></div><a class="add-btn" href="https://line.me/ti/p/~@ess7711t" id="btn-ess7711t" onclick="markVisited('ess7711t')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台南市"><div class="card-info"><div class="store-name">台南遠百</div><span class="line-id">@373rxyat</span></div><a class="add-btn" href="https://line.me/ti/p/~@373rxyat" id="btn-373rxyat" onclick="markVisited('373rxyat')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">高雄大遠百</div><span class="line-id">@204edsnm</span></div><a class="add-btn" href="https://line.me/ti/p/~@204edsnm" id="btn-204edsnm" onclick="markVisited('204edsnm')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台南市"><div class="card-info"><div class="store-name">台南西門</div><span class="line-id">@344rybaf</span></div><a class="add-btn" href="https://line.me/ti/p/~@344rybaf" id="btn-344rybaf" onclick="markVisited('344rybaf')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">漢神巨蛋</div><span class="line-id">@ldh6278d</span></div><a class="add-btn" href="https://line.me/ti/p/~@ldh6278d" id="btn-ldh6278d" onclick="markVisited('ldh6278d')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">高雄左營</div><span class="line-id">@obz8096L</span></div><a class="add-btn" href="https://line.me/ti/p/~@obz8096L" id="btn-obz8096L" onclick="markVisited('obz8096L')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">夢時代二館</div><span class="line-id">@ott3541o</span></div><a class="add-btn" href="https://line.me/ti/p/~@ott3541o" id="btn-ott3541o" onclick="markVisited('ott3541o')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="屏東縣"><div class="card-info"><div class="store-name">屏東環球</div><span class="line-id">@xhi2668e</span></div><a class="add-btn" href="https://line.me/ti/p/~@xhi2668e" id="btn-xhi2668e" onclick="markVisited('xhi2668e')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台南市"><div class="card-info"><div class="store-name">南紡購物中心</div><span class="line-id">@msq0107x</span></div><a class="add-btn" href="https://line.me/ti/p/~@msq0107x" id="btn-msq0107x" onclick="markVisited('msq0107x')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="澎湖縣"><div class="card-info"><div class="store-name">澎坊商場</div><span class="line-id">@185ybuaz</span></div><a class="add-btn" href="https://line.me/ti/p/~@185ybuaz" id="btn-185ybuaz" onclick="markVisited('185ybuaz')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">高雄大立</div><span class="line-id">@917hatdy</span></div><a class="add-btn" href="https://line.me/ti/p/~@917hatdy" id="btn-917hatdy" onclick="markVisited('917hatdy')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">義大二館</div><span class="line-id">@bxd6822t</span></div><a class="add-btn" href="https://line.me/ti/p/~@bxd6822t" id="btn-bxd6822t" onclick="markVisited('bxd6822t')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">義享天地</div><span class="line-id">@777nkbeo</span></div><a class="add-btn" href="https://line.me/ti/p/~@777nkbeo" id="btn-777nkbeo" onclick="markVisited('777nkbeo')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="高雄市"><div class="card-info"><div class="store-name">大魯閣新光</div><span class="line-id">@fko7562c</span></div><a class="add-btn" href="https://line.me/ti/p/~@fko7562c" id="btn-fko7562c" onclick="markVisited('fko7562c')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台南市"><div class="card-info"><div class="store-name">台南三井</div><span class="line-id">@212isujx</span></div><a class="add-btn" href="https://line.me/ti/p/~@212isujx" id="btn-212isujx" onclick="markVisited('212isujx')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="花蓮縣"><div class="card-info"><div class="store-name">花蓮遠東</div><span class="line-id">@ymc0892z</span></div><a class="add-btn" href="https://line.me/ti/p/~@ymc0892z" id="btn-ymc0892z" onclick="markVisited('ymc0892z')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台東縣"><div class="card-info"><div class="store-name">台東家樂福</div><span class="line-id">@438glrqv</span></div><a class="add-btn" href="https://line.me/ti/p/~@438glrqv" id="btn-438glrqv" onclick="markVisited('438glrqv')" rel="noopener" target="_blank">＋ 加好友</a></div>
+<div class="card" data-region="台東縣"><div class="card-info"><div class="store-name">台東秀泰</div><span class="line-id">@438glrqv</span></div><div class="card-actions"><a class="add-friend-btn" href="https://line.me/R/ti/p/@438glrqv" rel="noopener" target="_blank">＋ 加好友</a></div></div></div>
+<div id="page-draws" style="display:block;"><style>
+#page-draws .draw-fixed-warning{
+    margin-top:4px;
+    text-align:center;
+    color:#d93025;
+    font-size:14px;
+    font-weight:700;
+    line-height:1.45;
+}
+@media (max-width:600px){
+    #page-draws .draw-fixed-warning{
+        font-size:12px;
+        padding:0 8px;
+    }
+}
+</style><style>
+#page-draws .draw-item.quick-drawn {
+    background: #d0d0d0 !important;
+    color: #777 !important;
+}
+#page-draws .draw-item.quick-drawn .draw-product {
+    color: #777 !important;
+}
+</style><style>
+/* Row-only draw UI */
+#page-draws .draw-item.draw-item-clickable {
+  cursor: pointer;
+}
+#page-draws .draw-item.draw-item-clickable:hover:not(.quick-drawn):not(.not-started) {
+  background: rgba(0,0,0,0.035);
+}
+#page-draws .draw-item.quick-drawn {
+  background: #d9d9d9 !important;
+  color: #666 !important;
+}
+#page-draws .draw-item.quick-drawn .draw-product {
+  color: #666 !important;
+}
+#page-draws .draw-item.not-started {
+  cursor: not-allowed;
+}
+</style>
+<div class="draw-title-wrap"><h1 class="draw-main-title">9/24 9/25 抽選</h1><div class="draw-fixed-warning">抽選固定都是78家，如果沒有販售我會特別寫，還沒看到的就是還沒更新</div><div class="draw-last-updated">最後更新：2026/09/22 16:49</div></div>
+<div class="draw-mode-panel" id="drawModePanel">
+<div class="draw-mode-title">抽選模式</div>
+<div class="draw-mode-buttons">
+<button class="draw-mode-btn active" id="drawModeManual" onclick="setDrawMode('manual')" type="button">👆 手動抽選（預設）</button>
+<button class="draw-mode-btn auto" id="drawModeAuto" onclick="setDrawMode('auto')" type="button">⚡ 自動連抽</button>
+</div>
+<div class="draw-mode-desc" id="drawModeDesc">手動模式：點哪一筆就只開哪一筆，不會自動跳下一個。</div>
+</div>
+<div class="draw-filter-btn-group"><button class="filter-btn active" onclick="filterDrawRegion('all', this)">全部 (2)</button><button class="filter-btn" onclick="filterDrawRegion('台北市', this)">台北市 (1)</button><button class="filter-btn" onclick="filterDrawRegion('台中市', this)">台中市 (1)</button></div><div class="draw-secondary-filters"><div class="product-filter-wrap"><label class="product-filter-label" for="drawProductFilter">商品篩選：</label><select class="product-filter-select" id="drawProductFilter" onchange="filterDrawProduct(this.value)"><option value="all">全部商品</option><option value="BX-00">BX-00</option><option value="BX-09">BX-09</option><option value="BX-37">BX-37</option><option value="UX-03">UX-03</option><option value="UX-15">UX-15</option><option value="UX-19">UX-19</option><option value="UX-20">UX-20</option><option value="CX-00">CX-00</option><option value="CX-11">CX-11</option><option value="CX-19">CX-19</option><option value="BXG-01">BXG-01</option></select></div><div class="time-filter-wrap"><div class="product-filter-label">時間篩選：</div><div class="time-filter-btn-group"><button class="time-filter-btn active" data-time-filter="all" onclick="filterDrawTime('all', this)">全部時間</button><button class="time-filter-btn" data-time-filter="11:00" onclick="filterDrawTime('11:00', this)">11:00</button></div></div></div>
+<div class="draw-list"><div class="draw-city-group" data-draw-city-group="台北市"><div class="draw-city" data-draw-city-heading="台北市">台北市</div><div class="draw-store" data-draw-city="台北市" data-draw-start-time="11:00"><div class="draw-store-name">Funbox 南港潤泰</div><div class="draw-start">抽選/購買時間：2026/09/24 11:00~2026/09/25 21:00</div><div class="draw-items"><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/VynKNIV" data-draw-id="draw-825ad44255a8" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BX-00 暴風天馬</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/oy7Cz9BP" data-draw-id="draw-43ba3b0a6da5" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BX-09 戰鬥通行證</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/RV7ycwV" data-draw-id="draw-87bd7d67bef2" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BX-37 雙重極限衝擊戰鬥盤 豪華組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/qCHfdSx" data-draw-id="draw-423839da8bd1" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-03 魔導神杖</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/tW9LP8f" data-draw-id="draw-d869574c2c05" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-15 鮫鯊狂鱗改造組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/tOEJRss" data-draw-id="draw-e6acace8ca75" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-19 子彈獅鷲</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/QtUquaf" data-draw-id="draw-d85bd4b5f145" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-20 榮耀武神</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/7XX2Yib" data-draw-id="draw-e3b175625848" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-00 新世紀福音戰士改造組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/vwq27EK" data-draw-id="draw-97195a303c48" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-11 帝王威能</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/R5EUfii" data-draw-id="draw-ce34214e32b2" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-19 鱷魚裂甲</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/v6shPbD" data-draw-id="draw-83174708b98e" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BXG-01 烈焰飛鳳</div></div></div></div></div><div class="draw-city-group" data-draw-city-group="台中市"><div class="draw-city" data-draw-city-heading="台中市">台中市</div><div class="draw-store" data-draw-city="台中市" data-draw-start-time="11:00"><div class="draw-store-name">Funbox 台中港三井店</div><div class="draw-start">抽籤時間&使用期限：2026/09/24 11:00~2026/09/25 20:30</div><div class="draw-items"><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/Wk3tdkx" data-draw-id="draw-9f698c443d11" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BX-09 戰鬥陀螺X通行證</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/savT9fS" data-draw-id="draw-25d5b5381c64" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">BX-37 雙重極限衝擊戰鬥盤 豪華組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/tyxhyv9" data-draw-id="draw-815463b29145" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-03 魔導神杖</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/vITm6q8" data-draw-id="draw-32f0f61a4e05" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-15 鮫鯊狂鱗改造組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/o8u8ztc" data-draw-id="draw-768f25c52d0a" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-19 子彈獅鷲H</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/54FD9j4" data-draw-id="draw-128e2233a407" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">UX-20 榮耀武神LF</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/WLF39W1" data-draw-id="draw-496c79925a54" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-00 新世紀福音戰士改造組</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/zIhTLPo" data-draw-id="draw-caafbc023da5" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-11 帝王威能</div></div><div class="draw-item draw-item-clickable" data-draw-href="https://lin.ee/YD4g9U0" data-draw-id="draw-7d987c2f7cd9" onclick="openDrawRow(event, this)" onkeydown="handleDrawRowKey(event, this)" role="link" tabindex="0"><div class="draw-product">CX-19 鱷魚裂甲</div></div></div></div></div></div></div>
+<script>
+
+        function showPage(page, btnElement) {
+            document.querySelectorAll('.page-tab').forEach(btn => btn.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+
+            const storesTitle = document.getElementById('stores-title');
+            const storesSubtitle = document.getElementById('stores-subtitle');
+            const filter = document.querySelector('.filter-btn-group');
+            const storeGrid = document.getElementById('storeGrid');
+            const draws = document.getElementById('page-draws');
+
+            if (page === 'draws') {
+                storesTitle.style.display = 'none';
+                storesSubtitle.style.display = 'none';
+                filter.style.display = 'none';
+                storeGrid.style.display = 'none';
+                draws.style.display = 'block';
+                // 縣市篩選由 window.onload / 使用者點擊時處理，
+                // 這裡不要強制切回「全部」，否則重新整理會覆蓋已記住的縣市。
+            } else {
+                storesTitle.style.display = '';
+                storesSubtitle.style.display = '';
+                filter.style.display = '';
+                storeGrid.style.display = '';
+                draws.style.display = 'none';
+            }
+        }
+
+        function markDrawVisited(id) {
+            const row = document.querySelector('.draw-item[data-draw-id="' + CSS.escape(id) + '"]');
+            if (!row) return;
+
+            // 整條列直接變灰
+            row.classList.add('quick-drawn');
+
+            // 記錄 draw id
+            let visited = [];
+            try {
+                visited = JSON.parse(localStorage.getItem('visited_draw_links_0918_0919') || '[]');
+            } catch (e) {}
+            if (!visited.includes(id)) {
+                visited.push(id);
+                localStorage.setItem('visited_draw_links_0918_0919', JSON.stringify(visited));
+            }
+
+            // 與快速抽獎共用網址紀錄
+            try {
+                const key = 'funbox_continuous_draw_0918_0919_drawn';
+                const map = JSON.parse(localStorage.getItem(key) || '{}');
+                const href = row.getAttribute('data-draw-href');
+                if (href) {
+                    map[href] = true;
+                    localStorage.setItem(key, JSON.stringify(map));
+                }
+            } catch (e) {}
+
+            // 立即讓快速抽獎重新計算
+            if (typeof window.syncQuickDrawRegion === 'function') {
+                window.syncQuickDrawRegion(window.funboxSelectedDrawRegion || 'all');
+            }
+            if (typeof window.syncQuickDrawProduct === 'function') {
+                window.syncQuickDrawProduct(window.funboxSelectedDrawProduct || 'all');
+            }
+            if (typeof window.syncQuickDrawTime === 'function') {
+                window.syncQuickDrawTime(window.funboxSelectedDrawTime || 'all');
+            }
+        }
+
+        function restoreDrawVisited() {
+            let visited = [];
+            let drawnMapForQuick = {};
+            try {
+                visited = JSON.parse(localStorage.getItem('visited_draw_links_0918_0919') || '[]');
+            } catch (e) {}
+            try {
+                drawnMapForQuick = JSON.parse(
+                    localStorage.getItem('funbox_continuous_draw_0918_0919_drawn') || '{}'
+                );
+            } catch (e) {}
+
+            document.querySelectorAll('#page-draws .draw-item[data-draw-id]').forEach(row => {
+                const id = row.getAttribute('data-draw-id');
+                const href = row.getAttribute('data-draw-href');
+
+                if ((id && visited.includes(id)) || (href && drawnMapForQuick[href])) {
+                    row.classList.add('quick-drawn');
+
+                    if (id && !visited.includes(id)) visited.push(id);
+                    if (href) drawnMapForQuick[href] = true;
+                }
+            });
+
+            try {
+                localStorage.setItem('visited_draw_links_0918_0919', JSON.stringify(visited));
+                localStorage.setItem(
+                    'funbox_continuous_draw_0918_0919_drawn',
+                    JSON.stringify(drawnMapForQuick)
+                );
+            } catch (e) {}
+        }
+
+        window.restoreDrawVisited = restoreDrawVisited;
+
+        function filterDrawRegion(region, btnElement) {
+            document.querySelectorAll('#page-draws .draw-filter-btn-group .filter-btn')
+                .forEach(btn => btn.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+
+            document.querySelectorAll('#page-draws .draw-city-group').forEach(group => {
+                const city = group.getAttribute('data-draw-city-group');
+                group.style.display = (region === 'all' || city === region) ? '' : 'none';
+            });
+
+            // 記住上次選擇的縣市，重新整理後維持原本位置。
+            try {
+                localStorage.setItem('funbox_selected_draw_region', region);
+            } catch (e) {}
+        }
+
+        function filterRegion(region, btnElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                if (region === 'all' || card.getAttribute('data-region') === region) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function markVisited(id) {
+            const btn = document.getElementById('btn-' + id);
+            if (btn) {
+                btn.classList.add('clicked');
+                let visited = JSON.parse(localStorage.getItem('visited_lines') || '[]');
+                if (!visited.includes(id)) {
+                    visited.push(id);
+                    localStorage.setItem('visited_lines', JSON.stringify(visited));
+                }
+            }
+        }
+
+        window.onload = function() {
+            showPage('draws', document.querySelectorAll('.page-tab')[0]);
+
+            // 重新整理後恢復上次選擇的縣市，而不是每次都回到「全部」。
+            let savedRegion = 'all';
+            try {
+                savedRegion = localStorage.getItem('funbox_selected_draw_region') || 'all';
+            } catch (e) {}
+
+            const drawButtons = document.querySelectorAll('#page-draws .draw-filter-btn-group .filter-btn');
+            let savedButton = null;
+            drawButtons.forEach(btn => {
+                const match = btn.getAttribute('onclick') || '';
+                if (match.includes("'" + savedRegion + "'")) {
+                    savedButton = btn;
+                }
+            });
+
+            if (!savedButton) {
+                savedRegion = 'all';
+                savedButton = document.querySelector('#page-draws .draw-filter-btn-group .filter-btn');
+            }
+            filterDrawRegion(savedRegion, savedButton);
+
+            let visited = JSON.parse(localStorage.getItem('visited_lines') || '[]');
+            visited.forEach(id => {
+                const btn = document.getElementById('btn-' + id);
+                if (btn) btn.classList.add('clicked');
+            });
+            restoreDrawVisited();
+        };
+    </script>
+<script>
+/* ===== Funbox 連續抽選模式：依商品開始時間自動判斷 ===== */
+(function () {
+    "use strict";
+
+    var DRAWN_KEY = "funbox_continuous_draw_0918_0919_drawn";
+    // 將舊版「已變灰／已點過」的抽獎按鈕同步到快速抽選紀錄。
+    // 同一個網址下，換 HTML 不會清掉 localStorage；這裡把舊紀錄補進新的 DRAWN_KEY。
+    function migrateLegacyDrawnRecords() {
+        var map = drawnMap();
+        var changed = false;
+
+        document.querySelectorAll("#page-draws .draw-item").forEach(function (itemEl) {
+            var linkEl = itemEl.querySelector(".draw-link");
+            var href = (itemEl.getAttribute("data-draw-href") || (linkEl && linkEl.href) || "");
+            if (!href) return;
+
+            var isLegacyGray = itemEl.classList.contains("quick-drawn");
+
+            if (linkEl) {
+                var computed = window.getComputedStyle(linkEl);
+                var bg = (computed.backgroundColor || "").replace(/\s/g, "");
+                isLegacyGray =
+                    isLegacyGray ||
+                    linkEl.classList.contains("clicked") ||
+                    linkEl.classList.contains("quick-drawn") ||
+                    bg === "rgb(160,160,160)" ||
+                    bg === "rgb(169,169,169)" ||
+                    bg === "rgb(217,217,217)";
+            }
+
+            if (isLegacyGray && !map[href]) {
+                map[href] = true;
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            writeJson(DRAWN_KEY, map);
+        }
+
+        return changed;
+    }
+
+    var stores = [];
+    var currentCity = "all";
+    var currentProduct = "all";
+    var currentTime = "all";
+    var currentItem = null;
+
+    // ===== 自動連續抽選：偵測離開抽獎頁後回到本頁 =====
+    // 使用者第一次必須自己按按鈕開啟；之後只要抽獎頁關閉、原頁重新取得焦點，
+    // 就把上一筆標記完成並自動導向下一個 lin.ee。
+    var autoDrawEnabled = false;
+    var pendingAutoItem = null;
+    var drawPageWasLeft = false;
+    var returnHandling = false;
+    var lastAutoOpenAt = 0;
+    var AUTO_RETURN_MIN_MS = 700;
+    var AUTO_NEXT_DELAY_MS = 2000;
+    var autoNextTimer = null;
+    var autoCountdownTimer = null;
+
+    // 固定抽獎視窗模式：所有抽獎連結都盡量重用同一個 named window。
+    // 若 LINE / 手機瀏覽器把該視窗真的關閉，下一次仍會嘗試重新開啟；
+    // 若被 popup 規則阻擋，再退回原頁直接跳轉。
+    var DRAW_WINDOW_NAME = "funboxDrawWindow";
+    var drawWindowRef = null;
+
+    function openOrReuseDrawWindow(url) {
+        if (!url) return null;
+
+        // 先重用目前還活著的視窗，這種情況通常不需要再建立 popup。
+        try {
+            if (drawWindowRef && !drawWindowRef.closed) {
+                drawWindowRef.location.href = url;
+                try { drawWindowRef.focus(); } catch (ignore) {}
+                return drawWindowRef;
+            }
+        } catch (e) {
+            // 跨來源頁面可能限制部分屬性，改走 named window。
+        }
+
+        // 同一個 name 會優先重用既有 browsing context。
+        try {
+            drawWindowRef = window.open(url, DRAW_WINDOW_NAME);
+            if (drawWindowRef) {
+                try { drawWindowRef.focus(); } catch (ignore) {}
+                return drawWindowRef;
+            }
+        } catch (e) {}
+
+        return null;
+    }
+
+    // 從下方清單直接點任意一筆時，改成「從該筆之後」依目前畫面順序往下抽，
+    // 不會又跳回整份清單最上面。
+    var lowerRowSequenceMode = false;
+
+    function $id(id) { return document.getElementById(id); }
+
+    // 預設一定是手動模式。只有使用者明確切到「自動連抽」才會啟用連續跳轉。
+    window.funboxDrawMode = "manual";
+
+    function updateDrawModeUi() {
+        var manualBtn = $id("drawModeManual");
+        var autoBtn = $id("drawModeAuto");
+        var desc = $id("drawModeDesc");
+        var isAuto = window.funboxDrawMode === "auto";
+
+        if (manualBtn) manualBtn.classList.toggle("active", !isAuto);
+        if (autoBtn) autoBtn.classList.toggle("active", isAuto);
+        if (desc) {
+            desc.textContent = isAuto
+                ? "自動模式：從你點的那一筆開始，抽完返回後等 2 秒，再自動找下一個沒灰底的項目。"
+                : "手動模式：點哪一筆就只開哪一筆，不會自動跳下一個。";
+        }
+    }
+
+    window.setDrawMode = function (mode) {
+        mode = mode === "auto" ? "auto" : "manual";
+
+        if (mode === "manual" && autoDrawEnabled) {
+            stopAutoDraw();
+        }
+
+        window.funboxDrawMode = mode;
+        updateDrawModeUi();
+
+        // 同頁跳轉的自動流程需要在返回 index 後知道原本是自動模式。
+        try {
+            if (mode === "auto") {
+                sessionStorage.setItem("funbox_draw_mode", "auto");
+            } else {
+                sessionStorage.removeItem("funbox_draw_mode");
+            }
+        } catch (e) {}
+    };
+
+    function setAutoStatus(text) {
+        var el = $id("continuousDrawAutoStatus");
+        if (el) el.textContent = "自動偵測：" + text;
+    }
+
+    function updateAutoControls() {
+        var stop = $id("continuousDrawStop");
+        if (stop) stop.disabled = !autoDrawEnabled;
+
+        var floatingStop = $id("continuousDrawFloatingStop");
+        if (floatingStop) {
+            floatingStop.style.display = autoDrawEnabled ? "block" : "none";
+        }
+    }
+
+    function clearAutoNextTimers() {
+        if (autoNextTimer) {
+            window.clearTimeout(autoNextTimer);
+            autoNextTimer = null;
+        }
+        if (autoCountdownTimer) {
+            window.clearInterval(autoCountdownTimer);
+            autoCountdownTimer = null;
+        }
+    }
+
+    function stopAutoDraw() {
+        clearAutoNextTimers();
+        autoDrawEnabled = false;
+        pendingAutoItem = null;
+        drawPageWasLeft = false;
+        returnHandling = false;
+        lowerRowSequenceMode = false;
+
+        try {
+            sessionStorage.removeItem("funbox_auto_draw_active");
+            sessionStorage.removeItem("funbox_auto_draw_pending_url");
+            sessionStorage.removeItem("funbox_auto_draw_lower_sequence");
+        } catch (e) {}
+
+        var floatingStop = $id("continuousDrawFloatingStop");
+        if (floatingStop) floatingStop.textContent = "⏹ 停止自動跳轉";
+        updateAutoControls();
+        setAutoStatus("已停止；目前進度已保留，可再點下面任意一筆繼續");
+    }
+
+
+    function collectStores() {
+        var result = [];
+
+        document.querySelectorAll("#page-draws .draw-store").forEach(function (storeEl) {
+            var city = storeEl.getAttribute("data-draw-city") || "未分類";
+            var startTime = storeEl.getAttribute("data-draw-start-time") || "";
+            var nameEl = storeEl.querySelector(".draw-store-name");
+            var name = nameEl ? nameEl.textContent.trim() : "";
+            var products = [];
+
+            storeEl.querySelectorAll(".draw-item").forEach(function (itemEl) {
+                var productEl = itemEl.querySelector(".draw-product");
+                var href = itemEl.getAttribute("data-draw-href") || "";
+                if (!productEl || !href) return;
+
+                products.push({
+                    product: productEl.textContent.trim(),
+                    url: href,
+                    element: itemEl,
+                    link: null
+                });
+            });
+
+            if (name && products.length) {
+                result.push({
+                    city: city,
+                    startTime: startTime,
+                    name: name,
+                    products: products,
+                    element: storeEl
+                });
+            }
+        });
+
+        return result;
+    }
+
+    function readJson(key) {
+        try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+        catch (e) { return {}; }
+    }
+
+    function writeJson(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    }
+
+    function drawnMap() {
+        return readJson(DRAWN_KEY);
+    }
+
+    function markDrawn(product) {
+        var map = drawnMap();
+        map[product.url] = true;
+        writeJson(DRAWN_KEY, map);
+
+        if (product.link) {
+            product.link.classList.add("clicked");
+        }
+        if (product.element) {
+            product.element.classList.add("quick-drawn");
+
+            // 快速抽與下方清單共用同一份「已抽過」紀錄。
+            // 同時寫入 row id，避免其他同步/篩選流程把灰色狀態洗掉。
+            var rowId = product.element.getAttribute("data-draw-id");
+            if (rowId) {
+                var visited = [];
+                try {
+                    visited = JSON.parse(localStorage.getItem("visited_draw_links_0918_0919") || "[]");
+                } catch (e) {}
+                if (!visited.includes(rowId)) {
+                    visited.push(rowId);
+                    try {
+                        localStorage.setItem("visited_draw_links_0918_0919", JSON.stringify(visited));
+                    } catch (e) {}
+                }
+            }
+        }
+    }
+
+    function isDrawn(product) {
+        if (!!drawnMap()[product.url]) return true;
+
+        // 保險：只要下方這筆已經變灰／點過，快速抽就一定略過。
+        if (product.link && product.link.classList.contains("clicked")) return true;
+        if (product.element && product.element.classList.contains("quick-drawn")) return true;
+
+        return false;
+    }
+
+    function syncDrawnRows() {
+        var map = drawnMap();
+
+        stores.forEach(function (store) {
+            store.products.forEach(function (product) {
+                if (map[product.url]) {
+                    product.element.classList.add("quick-drawn");
+                    if (product.link) product.link.classList.add("clicked");
+                } else {
+                    product.element.classList.remove("quick-drawn");
+                    if (product.link) product.link.classList.remove("clicked");
+                }
+            });
+        });
+    }
+
+    // 支援商品名稱內的：
+    // （8/29 11:00才開始）
+    // （8/29 11:00開始）
+    // (8/29 11:00才開始)
+    function getProductStartTime(productText) {
+        var match = productText.match(
+            /[（(]\s*(\d{1,2})\s*\/\s*(\d{1,2})\s+([01]?\d|2[0-3]):([0-5]\d)\s*(?:才)?開始\s*[）)]/
+        );
+
+        if (!match) return null;
+
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = parseInt(match[1], 10);
+        var day = parseInt(match[2], 10);
+        var hour = parseInt(match[3], 10);
+        var minute = parseInt(match[4], 10);
+
+        var start = new Date(year, month - 1, day, hour, minute, 0, 0);
+
+        // 跨年情況：例如目前 12 月、文字寫 1/2。
+        if (start.getTime() < now.getTime() && month < (now.getMonth() + 1) - 6) {
+            start.setFullYear(year + 1);
+        }
+
+        return start;
+    }
+
+    function hasStarted(product) {
+        var start = getProductStartTime(product.product);
+        return !start || new Date() >= start;
+    }
+
+    // 自動連抽：若整家門市的抽選開始時間尚未到，直接跳過整家。
+    // 只處理可判斷的 HH:MM；像「開店」這種沒有明確時刻的公告不自行猜時間。
+    function storeHasStarted(store) {
+        if (!store) return true;
+
+        var timeText = String(store.startTime || "").trim();
+        var m = timeText.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
+        if (!m) return true;
+
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var day = now.getDate();
+
+        // 優先從門市顯示文字抓實際開始日期，例如 2026/09/18 11:00。
+        if (store.element) {
+            var startEl = store.element.querySelector(".draw-start");
+            var startText = startEl ? startEl.textContent : "";
+            var dm = startText.match(/(20\d{2})\s*[\/.-]\s*(\d{1,2})\s*[\/.-]\s*(\d{1,2})/);
+            if (dm) {
+                year = parseInt(dm[1], 10);
+                month = parseInt(dm[2], 10);
+                day = parseInt(dm[3], 10);
+            }
+        }
+
+        var start = new Date(
+            year,
+            month - 1,
+            day,
+            parseInt(m[1], 10),
+            parseInt(m[2], 10),
+            0,
+            0
+        );
+
+        return now >= start;
+    }
+
+    // 讓一般抽獎列表中的指定時間商品即時切換。
+    // 例如「（8/29 10:00才開始）」：
+    // 10:00 前顯示灰色「尚未開始」，10:00 到後自動變成綠色「抽獎」。
+    function syncTimedDrawLinks() {
+        var now = new Date();
+
+        document.querySelectorAll("#page-draws .draw-item").forEach(function (itemEl) {
+            var productEl = itemEl.querySelector(".draw-product");
+            var linkEl = itemEl.querySelector(".draw-link");
+            if (!productEl || !linkEl) return;
+
+            var start = getProductStartTime(productEl.textContent.trim());
+
+            if (!start) {
+                linkEl.classList.remove("not-started");
+                if (linkEl.textContent.trim() === "尚未開始") {
+                    linkEl.textContent = "抽獎";
+                }
+                return;
+            }
+
+            // 已抽的狀態不被時間同步覆蓋。
+            if (itemEl.classList.contains("quick-drawn") ||
+                linkEl.classList.contains("clicked")) {
+                linkEl.classList.remove("not-started");
+                return;
+            }
+
+            if (now >= start) {
+                linkEl.classList.remove("not-started");
+                linkEl.textContent = "抽獎";
+                linkEl.removeAttribute("aria-disabled");
+                linkEl.removeAttribute("tabindex");
+                linkEl.title = "";
+            } else {
+                linkEl.classList.add("not-started");
+                linkEl.textContent = "尚未開始";
+                linkEl.setAttribute("aria-disabled", "true");
+                linkEl.setAttribute("tabindex", "-1");
+                linkEl.title =
+                    "尚未到開始時間：" +
+                    (start.getMonth() + 1) + "/" +
+                    start.getDate() + " " +
+                    String(start.getHours()).padStart(2, "0") + ":" +
+                    String(start.getMinutes()).padStart(2, "0");
+            }
+        });
+    }
+
+    function startTimedDrawWatcher() {
+        syncTimedDrawLinks();
+        setInterval(function () {
+            syncTimedDrawLinks();
+            if (typeof render === "function") {
+                render();
+            }
+        }, 1000);
+    }
+
+
+    function quickDrawModel(text) {
+        var m = String(text || "").toUpperCase().match(/\b(BXG|BGX|BX|UX|CX)\s*-\s*(\d{2})\b/);
+        if (!m) return "";
+        var prefix = m[1] === "BGX" ? "BXG" : m[1];
+        return prefix + "-" + m[2];
+    }
+
+    function quickDrawProductMatches(product) {
+        if (currentProduct === "all") return true;
+        return quickDrawModel(product.product) === currentProduct;
+    }
+
+    function filteredStores() {
+        return stores.filter(function (store) {
+            var cityMatches = currentCity === "all" || store.city === currentCity;
+            if (!cityMatches) return false;
+
+            var timeMatches = currentTime === "all" || store.startTime === currentTime;
+            if (!timeMatches) return false;
+
+            if (currentProduct === "all") return true;
+
+            return store.products.some(function (product) {
+                return quickDrawProductMatches(product);
+            });
+        });
+    }
+
+    // 從目前縣市中，找「尚未抽 + 已經開始」的第一個商品。
+    // 因為未開始的商品不會被寫進已抽紀錄，
+    // 所以明天時間到了之後重新整理，就會自動重新出現在連續抽選流程中。
+    function findNextItem() {
+        var list = filteredStores();
+
+        for (var s = 0; s < list.length; s++) {
+            var store = list[s];
+            if (!storeHasStarted(store)) continue;
+
+            for (var p = 0; p < store.products.length; p++) {
+                var product = store.products[p];
+
+                if (!quickDrawProductMatches(product)) continue;
+                if (isDrawn(product)) continue;
+                if (!hasStarted(product)) continue;
+
+                return {
+                    store: store,
+                    product: product,
+                    storeIndex: s,
+                    productIndex: p
+                };
+            }
+        }
+
+        return null;
+    }
+
+    // 下方清單啟動模式：只找「剛完成那一筆之後」的下一筆。
+    // 仍尊重目前的縣市 / 商品 / 時間篩選，並略過已抽與尚未開始的項目。
+    function findNextItemAfter(completedItem) {
+        if (!completedItem || !completedItem.product) return findNextItem();
+
+        var list = filteredStores();
+        var flat = [];
+
+        for (var s = 0; s < list.length; s++) {
+            var store = list[s];
+            if (!storeHasStarted(store)) continue;
+            for (var p = 0; p < store.products.length; p++) {
+                var product = store.products[p];
+                if (!quickDrawProductMatches(product)) continue;
+                flat.push({
+                    store: store,
+                    product: product,
+                    storeIndex: s,
+                    productIndex: p
+                });
+            }
+        }
+
+        var startIndex = -1;
+        for (var i = 0; i < flat.length; i++) {
+            if (flat[i].product === completedItem.product ||
+                flat[i].product.url === completedItem.product.url) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        // 理論上點得到的 row 一定會在目前篩選結果內；若找不到則安全退回原模式。
+        if (startIndex < 0) return findNextItem();
+
+        for (var j = startIndex + 1; j < flat.length; j++) {
+            var candidate = flat[j];
+            if (isDrawn(candidate.product)) continue;
+            if (!hasStarted(candidate.product)) continue;
+            return candidate;
+        }
+
+        return null;
+    }
+
+    window.funboxContinuousDrawRefresh = render;
+function render() {
+        var list = filteredStores();
+        var candidate = findNextItem();
+        currentItem = candidate;
+
+        // 上方快速抽面板已移除；這個函式仍保留內部狀態更新，
+        // 讓下方直接點任意項目後的自動跳轉與篩選功能照常運作。
+        var progress = $id("continuousDrawProgress");
+        var storeEl = $id("continuousDrawStore");
+        var productEl = $id("continuousDrawProduct");
+        var open = $id("continuousDrawOpen");
+        var next = $id("continuousDrawNext");
+        if (!progress || !storeEl || !productEl || !open || !next) return;
+
+        if (!list.length) {
+            progress.textContent = "目前沒有可用的抽選資料";
+            storeEl.textContent = "";
+            productEl.textContent = "";
+            open.disabled = true;
+            next.disabled = true;
+            return;
+        }
+
+        if (!candidate) {
+            progress.textContent =
+                "目前沒有已開始且尚未抽的抽選";
+            storeEl.textContent = "";
+            productEl.textContent = "之後開始的項目會在開始時間到達後自動加入";
+            open.disabled = true;
+            next.disabled = true;
+            return;
+        }
+
+        progress.textContent =
+            "第 " + (candidate.storeIndex + 1) + " / " + list.length + " 家";
+
+        var matchedProductCount = candidate.store.products.filter(function (product) {
+            return quickDrawProductMatches(product);
+        }).length;
+
+        storeEl.textContent =
+            candidate.store.name + "　（" +
+            matchedProductCount + " 個符合篩選）";
+
+        productEl.textContent = candidate.product.product;
+
+        open.disabled = false;
+        next.disabled = false;
+        open.setAttribute("data-url", candidate.product.url);
+    }
+
+    function setCityFromTopFilter(region) {
+        currentCity = region || "all";
+        render();
+    }
+
+    function setProductFromTopFilter(product) {
+        currentProduct = product || "all";
+        render();
+    }
+
+    function setTimeFromTopFilter(time) {
+        currentTime = time || "all";
+        render();
+    }
+
+    // 對外公開，避免後面的篩選腳本覆蓋 filterDrawRegion / filterDrawProduct 後，
+    // 下方自動連抽仍能跟著目前篩選條件更新。
+    window.syncQuickDrawRegion = setCityFromTopFilter;
+    window.syncQuickDrawProduct = setProductFromTopFilter;
+    window.syncQuickDrawTime = setTimeFromTopFilter;
+
+    function armAutoDraw(item) {
+        if (!item || !item.product) return;
+        autoDrawEnabled = true;
+        updateAutoControls();
+        pendingAutoItem = item;
+        drawPageWasLeft = false;
+        returnHandling = false;
+        lastAutoOpenAt = Date.now();
+
+        setAutoStatus("已開啟抽選，等待 LINE 抽獎頁關閉");
+
+        try {
+            sessionStorage.setItem("funbox_auto_draw_active", "1");
+            sessionStorage.setItem("funbox_auto_draw_pending_url", item.product.url || "");
+        } catch (e) {}
+    }
+
+    function noteDrawPageLeft() {
+        if (!autoDrawEnabled || !pendingAutoItem) return;
+
+        // LINE 內建瀏覽器常常在點下 lin.ee 的瞬間就 blur。
+        // 這個 blur 正是我們要的「已離開原頁」訊號，不能再忽略。
+        drawPageWasLeft = true;
+        setAutoStatus("已偵測到離開原頁，等待回來");
+    }
+
+    function openNextAutomatically(item) {
+        if (!item || !item.product || !item.product.url) return;
+
+        lowerRowSequenceMode = true;
+        armAutoDraw(item);
+        try {
+            sessionStorage.setItem("funbox_auto_draw_lower_sequence", "1");
+        } catch (e) {}
+
+        setAutoStatus("正在用同一頁開啟下一個抽獎");
+
+        // 同頁跳轉模式：不建立新分頁 / 新視窗。
+        // 離開 index 前已把目前待抽網址存進 sessionStorage；
+        // 抽獎關閉 / 返回 index 後，會從 sessionStorage 恢復並繼續。
+        window.location.href = item.product.url;
+    }
+
+
+    function scheduleNextAutomatically(item) {
+        clearAutoNextTimers();
+
+        var remaining = Math.ceil(AUTO_NEXT_DELAY_MS / 1000);
+        setAutoStatus("已完成；" + remaining + " 秒後開啟下一個（可按停止）");
+
+        var floatingStop = $id("continuousDrawFloatingStop");
+        if (floatingStop) {
+            floatingStop.textContent = "⏹ 停止（" + remaining + "秒）";
+            floatingStop.style.display = "block";
+        }
+
+        autoCountdownTimer = window.setInterval(function () {
+            remaining -= 1;
+            if (remaining > 0 && autoDrawEnabled) {
+                setAutoStatus("已完成；" + remaining + " 秒後開啟下一個（可按停止）");
+                var btn = $id("continuousDrawFloatingStop");
+                if (btn) btn.textContent = "⏹ 停止（" + remaining + "秒）";
+            }
+        }, 1000);
+
+        autoNextTimer = window.setTimeout(function () {
+            clearAutoNextTimers();
+            if (!autoDrawEnabled) {
+                returnHandling = false;
+                return;
+            }
+            var btn = $id("continuousDrawFloatingStop");
+            if (btn) btn.textContent = "⏹ 停止自動跳轉";
+            returnHandling = false;
+            openNextAutomatically(item);
+        }, AUTO_NEXT_DELAY_MS);
+    }
+
+    function handleReturnFromDraw() {
+        if (!autoDrawEnabled || !pendingAutoItem || !drawPageWasLeft || returnHandling) return;
+        if (document.hidden) return;
+        if (Date.now() - lastAutoOpenAt < AUTO_RETURN_MIN_MS) return;
+
+        returnHandling = true;
+        setAutoStatus("已偵測到返回，正在準備下一個");
+
+        var completedItem = pendingAutoItem;
+        pendingAutoItem = null;
+        drawPageWasLeft = false;
+
+        markDrawn(completedItem.product);
+        syncDrawnRows();
+        if (typeof window.restoreDrawVisited === "function") {
+            window.restoreDrawVisited();
+        }
+
+        var nextItem = lowerRowSequenceMode
+            ? findNextItemAfter(completedItem)
+            : findNextItem();
+        currentItem = nextItem;
+        render();
+
+        if (!nextItem || !nextItem.product) {
+            autoDrawEnabled = false;
+            lowerRowSequenceMode = false;
+            updateAutoControls();
+            returnHandling = false;
+            setAutoStatus("已到目前清單最後一筆，已停止自動連續抽選");
+            try {
+                sessionStorage.removeItem("funbox_auto_draw_active");
+                sessionStorage.removeItem("funbox_auto_draw_pending_url");
+            } catch (e) {}
+            return;
+        }
+
+        scheduleNextAutomatically(nextItem);
+    }
+
+    function openCurrent() {
+        if (!currentItem || !currentItem.product) return;
+
+        // 上方「開始」仍維持原本：從目前篩選中的第一個未抽項目開始。
+        lowerRowSequenceMode = false;
+
+        if (!hasStarted(currentItem.product)) {
+            render();
+            return;
+        }
+
+        armAutoDraw(currentItem);
+        window.location.href = currentItem.product.url;
+    }
+
+    function completeAndOpenNext() {
+        if (!currentItem || !currentItem.product) {
+            render();
+            return;
+        }
+
+        // 再判斷一次，避免網頁開著期間剛好跨過開始時間。
+        if (!hasStarted(currentItem.product)) {
+            render();
+            return;
+        }
+
+        markDrawn(currentItem.product);
+        syncDrawnRows();
+
+        // 立即同步下方清單的灰色狀態，不必等重新整理。
+        if (typeof window.restoreDrawVisited === "function") {
+            window.restoreDrawVisited();
+        }
+
+        var nextItem = findNextItem();
+        currentItem = nextItem;
+        render();
+
+        if (nextItem && nextItem.product) {
+            // 手動備援按鈕仍由使用者手勢開新頁；同時重新啟用自動回來跳下一個。
+            armAutoDraw(nextItem);
+            window.location.href = nextItem.product.url;
+        } else {
+            autoDrawEnabled = false;
+            pendingAutoItem = null;
+            updateAutoControls();
+            setAutoStatus("全部完成，已停止自動連續抽選");
+        }
+    }
+
+    // 讓下方任意一列都能直接成為自動連續抽選的起點。
+    // 同頁跳轉模式：不建立新分頁，直接由目前這一頁進入 lin.ee。
+    window.startAutoDrawFromRow = function (row) {
+        if (window.funboxDrawMode !== "auto") return false;
+        if (!row) return false;
+
+        var href = row.getAttribute("data-draw-href") || "";
+        if (!href) return false;
+
+        var found = null;
+        var list = filteredStores();
+
+        for (var s = 0; s < list.length && !found; s++) {
+            var store = list[s];
+            for (var p = 0; p < store.products.length; p++) {
+                var product = store.products[p];
+                if (product.element === row || product.url === href) {
+                    found = {
+                        store: store,
+                        product: product,
+                        storeIndex: s,
+                        productIndex: p
+                    };
+                    break;
+                }
+            }
+        }
+
+        // 若目前篩選剛好不同步，仍允許從實際點到的 row 開始。
+        if (!found) {
+            for (var ss = 0; ss < stores.length && !found; ss++) {
+                var fallbackStore = stores[ss];
+                for (var pp = 0; pp < fallbackStore.products.length; pp++) {
+                    var fallbackProduct = fallbackStore.products[pp];
+                    if (fallbackProduct.element === row || fallbackProduct.url === href) {
+                        found = {
+                            store: fallbackStore,
+                            product: fallbackProduct,
+                            storeIndex: ss,
+                            productIndex: pp
+                        };
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!found || !hasStarted(found.product)) return false;
+
+        clearAutoNextTimers();
+        lowerRowSequenceMode = true;
+        currentItem = found;
+        armAutoDraw(found);
+        try {
+            sessionStorage.setItem("funbox_auto_draw_lower_sequence", "1");
+        } catch (e) {}
+        setAutoStatus("同頁跳轉模式；抽完關閉 / 返回後有 2 秒可停止");
+
+        // 不開新分頁：目前頁面直接進入抽獎。
+        window.location.href = found.product.url;
+        return true;
+    };
+
+    function findItemByUrl(url) {
+        if (!url) return null;
+        for (var s = 0; s < stores.length; s++) {
+            var store = stores[s];
+            for (var p = 0; p < store.products.length; p++) {
+                var product = store.products[p];
+                if (product.url === url) {
+                    return {
+                        store: store,
+                        product: product,
+                        storeIndex: s,
+                        productIndex: p
+                    };
+                }
+            }
+        }
+        return null;
+    }
+
+    // 同頁模式返回 index 時，原本的 JavaScript 已被重新載入，
+    // 因此用 sessionStorage 找回「剛才正在抽的那一筆」。
+    // 找回後才把它標成完成，再提供 2 秒停止時間。
+    function resumeSamePageAutoDrawIfNeeded() {
+        var active = false;
+        var pendingUrl = "";
+        try {
+            active = sessionStorage.getItem("funbox_auto_draw_active") === "1";
+            pendingUrl = sessionStorage.getItem("funbox_auto_draw_pending_url") || "";
+        } catch (e) {}
+
+        if (!active || !pendingUrl) return false;
+
+        // 只有真的有尚未完成的自動連抽 session，返回時才恢復為自動模式；
+        // 平常重新開頁面仍維持「手動抽選」預設。
+        window.funboxDrawMode = "auto";
+        updateDrawModeUi();
+
+        var completedItem = findItemByUrl(pendingUrl);
+        if (!completedItem || !completedItem.product) {
+            stopAutoDraw();
+            return false;
+        }
+
+        autoDrawEnabled = true;
+        lowerRowSequenceMode = true;
+        pendingAutoItem = null;
+        drawPageWasLeft = false;
+        returnHandling = true;
+        updateAutoControls();
+
+        markDrawn(completedItem.product);
+        syncDrawnRows();
+        if (typeof window.restoreDrawVisited === "function") {
+            window.restoreDrawVisited();
+        }
+
+        var nextItem = findNextItemAfter(completedItem);
+        currentItem = nextItem;
+        render();
+
+        if (!nextItem || !nextItem.product) {
+            clearAutoNextTimers();
+            autoDrawEnabled = false;
+            lowerRowSequenceMode = false;
+            returnHandling = false;
+            try {
+                sessionStorage.removeItem("funbox_auto_draw_active");
+                sessionStorage.removeItem("funbox_auto_draw_pending_url");
+                sessionStorage.removeItem("funbox_auto_draw_lower_sequence");
+            } catch (e) {}
+            updateAutoControls();
+            setAutoStatus("已到目前清單最後一筆，已停止自動跳轉");
+            return true;
+        }
+
+        // 先清掉上一筆 pending；2 秒到時 openNextAutomatically 會寫入下一筆。
+        try {
+            sessionStorage.removeItem("funbox_auto_draw_pending_url");
+        } catch (e) {}
+
+        returnHandling = false;
+        scheduleNextAutomatically(nextItem);
+        return true;
+    }
+
+    function hookTopCityButtons() {
+        var oldFilter = window.filterDrawRegion;
+
+        window.filterDrawRegion = function (region, btnElement) {
+            if (typeof oldFilter === "function") {
+                oldFilter(region, btnElement);
+            }
+            setCityFromTopFilter(region);
+        };
+    }
+
+    function hookTopProductFilter() {
+        var oldProductFilter = window.filterDrawProduct;
+
+        window.filterDrawProduct = function (product) {
+            if (typeof oldProductFilter === "function") {
+                oldProductFilter(product);
+            }
+            setProductFromTopFilter(product);
+        };
+    }
+
+    function hookTopTimeFilter() {
+        var oldTimeFilter = window.filterDrawTime;
+
+        window.filterDrawTime = function (time) {
+            if (typeof oldTimeFilter === "function") {
+                oldTimeFilter(time);
+            }
+            setTimeFromTopFilter(time);
+        };
+    }
+
+    function init() {
+        stores = collectStores();
+        currentCity = "all";
+        currentProduct = "all";
+        currentTime = "all";
+
+        try {
+            currentCity = localStorage.getItem("funbox_selected_draw_region") || "all";
+            currentProduct = localStorage.getItem("funbox_selected_draw_product") || "all";
+            currentTime = localStorage.getItem("funbox_selected_draw_time") || "all";
+        } catch (e) {}
+
+        migrateLegacyDrawnRecords();
+        syncDrawnRows();
+        // 以目前畫面實際選中的篩選為準，避免 localStorage 舊值造成
+        // 「畫面顯示全部，但內部篩選還留在台中市」。
+        var activeCityBtn = document.querySelector("#page-draws .draw-filter-btn-group .filter-btn.active");
+        if (activeCityBtn) {
+            var activeClick = activeCityBtn.getAttribute("onclick") || "";
+            var activeMatch = activeClick.match(/filterDrawRegion\('([^']+)'/);
+            if (activeMatch) currentCity = activeMatch[1];
+        }
+
+        var productSelect = document.getElementById("drawProductFilter");
+        if (productSelect) currentProduct = productSelect.value || "all";
+
+        var activeTimeBtn = document.querySelector(".time-filter-btn.active");
+        if (activeTimeBtn) currentTime = activeTimeBtn.getAttribute("data-time-filter") || "all";
+
+        render();
+        hookTopCityButtons();
+        hookTopProductFilter();
+        hookTopTimeFilter();
+
+        // 一般進入頁面一律預設手動；如果稍後偵測到有效的自動連抽 session，
+        // resumeSamePageAutoDrawIfNeeded() 會再切回自動模式。
+        window.funboxDrawMode = "manual";
+        updateDrawModeUi();
+
+        // 自動模式啟動時顯示固定在右下角的停止鍵；
+        // 從很下面的店家開始時，不必再捲回上方才能停止。
+        if (!$id("continuousDrawFloatingStop")) {
+            var floatingStop = document.createElement("button");
+            floatingStop.id = "continuousDrawFloatingStop";
+            floatingStop.type = "button";
+            floatingStop.textContent = "⏹ 停止自動跳轉";
+            floatingStop.style.cssText = [
+                "display:none",
+                "position:fixed",
+                "right:14px",
+                "bottom:18px",
+                "z-index:99999",
+                "border:0",
+                "border-radius:999px",
+                "padding:12px 16px",
+                "background:#d9534f",
+                "color:#fff",
+                "font-size:14px",
+                "font-weight:800",
+                "box-shadow:0 4px 14px rgba(0,0,0,.25)",
+                "cursor:pointer"
+            ].join(";");
+            floatingStop.onclick = stopAutoDraw;
+            document.body.appendChild(floatingStop);
+        }
+
+        // 上方快速抽控制已移除；只保留下方清單自動連抽與右下角停止鍵。
+        var topOpen = $id("continuousDrawOpen");
+        var topNext = $id("continuousDrawNext");
+        var topStop = $id("continuousDrawStop");
+        if (topOpen) topOpen.onclick = openCurrent;
+        if (topNext) topNext.onclick = completeAndOpenNext;
+        if (topStop) topStop.onclick = stopAutoDraw;
+        updateAutoControls();
+
+        // 如果剛從同頁抽獎返回，這裡會恢復上一筆並開始 2 秒倒數。
+        // 成功恢復後不需要依賴 focus / visibilitychange 才能續抽。
+        resumeSamePageAutoDrawIfNeeded();
+
+        // 舊式事件偵測仍保留作相容性備援。
+        // 抽獎頁打開時原頁通常會 hidden / blur；抽完關閉後則 visible / focus。
+        // 兩組事件都監聽，兼容 LINE 內建瀏覽器與一般手機瀏覽器。
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                noteDrawPageLeft();
+            } else {
+                window.setTimeout(handleReturnFromDraw, 80);
+            }
+        });
+        window.addEventListener("blur", noteDrawPageLeft);
+        window.addEventListener("focus", function () {
+            window.setTimeout(handleReturnFromDraw, 80);
+        });
+        window.addEventListener("pageshow", function () {
+            window.setTimeout(handleReturnFromDraw, 80);
+        });
+        window.addEventListener("pagehide", noteDrawPageLeft);
+
+        // 某些 LINE WebView 不會可靠送出 focus / visibilitychange，
+        // 但切去抽獎頁時會暫停原頁 JavaScript。回來後 setInterval 會出現
+        // 明顯的時間斷層；把這個「恢復執行」也當作返回訊號。
+        var lastResumeWatchdogTick = Date.now();
+        window.setInterval(function () {
+            var now = Date.now();
+            var gap = now - lastResumeWatchdogTick;
+            lastResumeWatchdogTick = now;
+
+            if (!autoDrawEnabled || !pendingAutoItem || returnHandling) return;
+            if (now - lastAutoOpenAt < AUTO_RETURN_MIN_MS) return;
+
+            if (gap >= 1800) {
+                setAutoStatus("偵測到 LINE WebView 恢復，準備下一個");
+                drawPageWasLeft = true;
+                window.setTimeout(handleReturnFromDraw, 80);
+            }
+        }, 300);
+
+        // Android WebView / Page Lifecycle 在部分版本會送 resume / freeze。
+        document.addEventListener("freeze", noteDrawPageLeft);
+        document.addEventListener("resume", function () {
+            drawPageWasLeft = true;
+            window.setTimeout(handleReturnFromDraw, 80);
+        });
+
+        startTimedDrawWatcher();
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+})();
+</script>
+<script>
+(function(){
+    "use strict";
+
+    window.funboxSelectedDrawRegion = "all";
+    window.funboxSelectedDrawProduct = "all";
+    window.funboxSelectedDrawTime = "all";
+
+    function normalizeModel(text){
+        var m = String(text || "").toUpperCase().match(/\b(BXG|BGX|BX|UX|CX)\s*-\s*(\d{2})\b/);
+        if (!m) return "";
+        var prefix = m[1] === "BGX" ? "BXG" : m[1];
+        return prefix + "-" + m[2];
+    }
+
+    window.applyDrawFilters = function(){
+        var region = window.funboxSelectedDrawRegion || "all";
+        var product = window.funboxSelectedDrawProduct || "all";
+        var time = window.funboxSelectedDrawTime || "all";
+
+        document.querySelectorAll("#page-draws .draw-city-group").forEach(function(group){
+            var city = group.getAttribute("data-draw-city-group") || "";
+            var cityAllowed = region === "all" || city === region;
+            var anyStoreVisible = false;
+
+            group.querySelectorAll(":scope > .draw-store").forEach(function(store){
+                var storeTime = store.getAttribute("data-draw-start-time") || "";
+                var timeAllowed = time === "all" || storeTime === time;
+                var anyItemVisible = false;
+
+                store.querySelectorAll(".draw-item").forEach(function(item){
+                    var productEl = item.querySelector(".draw-product");
+                    var model = normalizeModel(productEl ? productEl.textContent : "");
+                    var itemAllowed = product === "all" || model === product;
+
+                    item.style.display = itemAllowed ? "" : "none";
+                    if (itemAllowed) anyItemVisible = true;
+                });
+
+                var showStore = cityAllowed && timeAllowed && anyItemVisible;
+                store.style.display = showStore ? "" : "none";
+                if (showStore) anyStoreVisible = true;
+            });
+
+            group.style.display = cityAllowed && anyStoreVisible ? "" : "none";
+        });
+    };
+
+    window.filterDrawRegion = function(region, btnElement){
+        window.funboxSelectedDrawRegion = region || "all";
+
+        document.querySelectorAll("#page-draws .draw-filter-btn-group .filter-btn")
+            .forEach(function(btn){ btn.classList.remove("active"); });
+        if (btnElement) btnElement.classList.add("active");
+
+        try {
+            localStorage.setItem("funbox_selected_draw_region", window.funboxSelectedDrawRegion);
+        } catch(e){}
+
+        window.applyDrawFilters();
+
+        if (typeof window.syncQuickDrawRegion === "function") {
+            window.syncQuickDrawRegion(window.funboxSelectedDrawRegion);
+        }
+    };
+
+    window.filterDrawProduct = function(product){
+        window.funboxSelectedDrawProduct = product || "all";
+        try {
+            localStorage.setItem("funbox_selected_draw_product", window.funboxSelectedDrawProduct);
+        } catch(e){}
+        window.applyDrawFilters();
+
+        if (typeof window.syncQuickDrawProduct === "function") {
+            window.syncQuickDrawProduct(window.funboxSelectedDrawProduct);
+        }
+        if (typeof window.syncQuickDrawTime === "function") {
+            window.syncQuickDrawTime(window.funboxSelectedDrawTime);
+        }
+    };
+
+    window.filterDrawTime = function(time, btn){
+        window.funboxSelectedDrawTime = time || "all";
+        try {
+            localStorage.setItem("funbox_selected_draw_time", window.funboxSelectedDrawTime);
+        } catch(e){}
+
+        document.querySelectorAll(".time-filter-btn").forEach(function(b){
+            b.classList.remove("active");
+        });
+        if (btn) {
+            btn.classList.add("active");
+        } else {
+            var target = document.querySelector('.time-filter-btn[data-time-filter="' + window.funboxSelectedDrawTime + '"]');
+            if (target) target.classList.add("active");
+        }
+
+        window.applyDrawFilters();
+
+        if (typeof window.syncQuickDrawTime === "function") {
+            window.syncQuickDrawTime(window.funboxSelectedDrawTime);
+        }
+    };
+
+    // 等原本 window.onload 跑完後再恢復商品篩選。
+    window.addEventListener("load", function(){
+        var savedRegion = "all";
+        var savedProduct = "all";
+        var savedTime = "all";
+
+        try {
+            savedRegion = localStorage.getItem("funbox_selected_draw_region") || "all";
+            savedProduct = localStorage.getItem("funbox_selected_draw_product") || "all";
+            savedTime = localStorage.getItem("funbox_selected_draw_time") || "all";
+        } catch(e){}
+
+        window.funboxSelectedDrawRegion = savedRegion;
+        window.funboxSelectedDrawProduct = savedProduct;
+        window.funboxSelectedDrawTime = savedTime;
+
+        var sel = document.getElementById("drawProductFilter");
+        if (sel) {
+            var exists = Array.from(sel.options).some(function(o){ return o.value === savedProduct; });
+            sel.value = exists ? savedProduct : "all";
+            if (!exists) window.funboxSelectedDrawProduct = "all";
+        }
+
+        var timeBtn = document.querySelector('.time-filter-btn[data-time-filter="' + savedTime + '"]');
+        if (!timeBtn) {
+            savedTime = "all";
+            window.funboxSelectedDrawTime = "all";
+            timeBtn = document.querySelector('.time-filter-btn[data-time-filter="all"]');
+        }
+        document.querySelectorAll(".time-filter-btn").forEach(function(b){
+            b.classList.remove("active");
+        });
+        if (timeBtn) timeBtn.classList.add("active");
+
+        // 同步縣市按鈕 active 狀態
+        document.querySelectorAll("#page-draws .draw-filter-btn-group .filter-btn").forEach(function(btn){
+            btn.classList.remove("active");
+            var click = btn.getAttribute("onclick") || "";
+            if (click.indexOf("'" + window.funboxSelectedDrawRegion + "'") !== -1) {
+                btn.classList.add("active");
+            }
+        });
+
+        window.applyDrawFilters();
+
+        if (typeof window.syncQuickDrawRegion === "function") {
+            window.syncQuickDrawRegion(window.funboxSelectedDrawRegion);
+        }
+        if (typeof window.syncQuickDrawProduct === "function") {
+            window.syncQuickDrawProduct(window.funboxSelectedDrawProduct);
+        }
+    });
+})();
+</script><script>
+(function(){
+    "use strict";
+
+    window.openDrawRow = function(event, row) {
+    if (!row || row.classList.contains('not-started')) return;
+
+    const href = row.getAttribute('data-draw-href');
+    const id = row.getAttribute('data-draw-id');
+    if (!href || !id) return;
+
+    // 預設手動模式：只開使用者點的這一筆，不啟動任何自動下一個。
+    if (window.funboxDrawMode !== 'auto') {
+        window.markDrawVisited(id);
+        window.location.href = href;
+        return;
+    }
+
+    // 自動連抽模式：從使用者點的這一筆開始，返回後自動找下一個未灰項目。
+    if (typeof window.startAutoDrawFromRow === 'function') {
+        const started = window.startAutoDrawFromRow(row);
+        if (started) return;
+    }
+
+    // 保底：若自動模式尚未初始化，至少仍能正常開啟該筆。
+    window.markDrawVisited(id);
+    window.location.href = href;
+};
+
+    window.handleDrawRowKey = function(event, row) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        window.openDrawRow(event, row);
+    }
+};
+})();
+</script></body>
+</html>

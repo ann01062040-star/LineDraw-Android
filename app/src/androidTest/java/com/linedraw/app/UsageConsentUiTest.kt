@@ -1,0 +1,76 @@
+package com.linedraw.app
+
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.linedraw.app.usage.AccessDenied
+import com.linedraw.app.data.Record
+import com.linedraw.app.usage.UsageDeclaration
+import kotlinx.coroutines.*
+import org.junit.*
+import org.junit.Assert.*
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class UsageConsentUiTest {
+    @get:Rule val compose = createEmptyComposeRule()
+    private val app get() = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as LineDrawApp
+    private var scenario: ActivityScenario<MainActivity>? = null
+    @Before fun setup() = runBlocking {
+        check(android.os.Build.HARDWARE.contains("ranchu"))
+        app.ready.await()
+        withContext(Dispatchers.IO) { app.repository.db.clearAllTables() }
+        app.getSharedPreferences("preferences", 0).edit().putBoolean("demo", !BuildConfig.FIVE_LINK_TEST)
+            .putString("appearance", "淺色").commit()
+        Unit
+    }
+    @After fun close() { scenario?.close() }
+    @Test fun firstOpenShowsFullDeclarationAndAgreementSurvivesReopen() = runBlocking {
+        ConsentFixtures.install(app, usageAccepted = false)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithTag("usageDeclaration").assertIsDisplayed()
+        compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
+        for (paragraph in UsageDeclaration.paragraphs) compose.onNodeWithText(paragraph).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("acceptUsage").performClick()
+        compose.onNodeWithTag("mainList").assertIsDisplayed()
+        compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
+        assertTrue(app.usageConsent.accepted.value)
+        scenario!!.close(); scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithTag("usageDeclaration").assertDoesNotExist()
+        compose.onNodeWithTag("mainList").assertIsDisplayed()
+        compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
+        Unit
+    }
+    @Test fun decliningExitsWithoutDeletingDrawRecords() = runBlocking {
+        ConsentFixtures.install(app, usageAccepted = false)
+        app.repository.dao.saveRecord(Record("saved-profile", "saved-key", "既有活動", "店家", "SUBMITTED", evidence = "fixture"))
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithTag("declineUsage").performClick()
+        compose.waitUntil(5000) { scenario!!.state == Lifecycle.State.DESTROYED }
+        assertFalse(app.usageConsent.accepted.value)
+        assertEquals("SUBMITTED", app.repository.dao.record("saved-profile", "saved-key")?.status)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithTag("usageDeclaration").assertIsDisplayed()
+        Unit
+    }
+    @Test fun withdrawnConsentBlocksDispatchBeforeAgreement() = runBlocking {
+        ConsentFixtures.install(app)
+        val permit = app.access.current()!!
+        app.usageConsent.decline()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithTag("usageDeclaration").assertIsDisplayed()
+        compose.onNodeWithTag("mainList").assertDoesNotExist()
+        assertNull(app.access.current())
+        assertTrue(runCatching { app.repository.sync() }.exceptionOrNull() is AccessDenied)
+        assertTrue(runCatching { app.repository.start(listOf("fake"), "p", true, false) }.exceptionOrNull() is AccessDenied)
+        var dispatched = false
+        assertTrue(runCatching { app.access.dispatch(permit) { dispatched = true } }.exceptionOrNull() is AccessDenied)
+        assertFalse(dispatched)
+        compose.onNodeWithTag("acceptUsage").performClick()
+        compose.onNodeWithTag("mainList").assertIsDisplayed()
+        assertNotNull(app.access.current())
+    }
+}

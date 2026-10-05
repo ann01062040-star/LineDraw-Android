@@ -1,0 +1,4 @@
+# 保留原始網頁快照的空白，以便解析回歸比對。
+app/src/test/resources/*.html -whitespace
+# Windows Wrapper 使用 CRLF。
+*.bat text eol=crlf whitespace=cr-at-eol

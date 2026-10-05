@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">LineDraw</string>
+    <string name="accessibility_description">只在你開始批次後，讀取已選活動的 LINE 畫面、加入店家好友並點擊抽選。未知畫面立即暫停。不保存聊天內容。你可以隨時暫停、停止或關閉此服務。</string>
+    <style name="Theme.LineDraw" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#F4F6FA</item>
+    </style>
+</resources>
