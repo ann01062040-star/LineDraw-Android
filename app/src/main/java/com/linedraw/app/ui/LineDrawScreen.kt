@@ -189,7 +189,7 @@ fun LineDrawScreen(app: LineDrawApp, currentTimeMillis: () -> Long = System::cur
                 }) { padding ->
                     LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("mainList"), state=when(tab){"紀錄"->historyListState;"設定"->settingsListState;else->drawListState}, contentPadding=PaddingValues(start=20.dp,end=20.dp,top=20.dp,bottom=24.dp), verticalArrangement=Arrangement.spacedBy(16.dp)) {
                         item { Row(verticalAlignment=Alignment.CenterVertically) {
-                            Text("LINEDRAW", color=colors.primary, fontWeight=FontWeight.ExtraBold, fontSize=13.sp, letterSpacing=2.sp, modifier=Modifier.weight(1f))
+                            Text("LineDraw 獨立版", color=colors.primary, fontWeight=FontWeight.ExtraBold, fontSize=13.sp, modifier=Modifier.weight(1f))
                             Tag(if(demo) "模擬模式" else if(fiveLinks) "抽選測試 · $profile" else "本機 · $profile")
                         } }
                         item { Text(when(tab) { "抽選" -> "把時間，留給喜歡的事。"; "紀錄" -> "每次抽選，都有跡可循。"; else -> "依你的方式。" }, fontSize=30.sp, lineHeight=39.sp, fontWeight=FontWeight.Bold, letterSpacing=(-.8).sp) }

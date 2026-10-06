@@ -33,7 +33,12 @@ class UsageConsentUiTest {
         scenario = ActivityScenario.launch(MainActivity::class.java)
         compose.onNodeWithTag("usageDeclaration").assertIsDisplayed()
         compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
-        for (paragraph in UsageDeclaration.paragraphs) compose.onNodeWithText(paragraph).performScrollTo().assertIsDisplayed()
+        for (section in UsageDeclaration.sections) compose.onNodeWithText(section.body).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("consentGuide").performScrollTo().performClick()
+        compose.onNodeWithTag("legalDocument").assertIsDisplayed()
+        compose.onNode(hasText("LineDraw 獨立版抽選輔助", substring = true) and hasAnyAncestor(hasTestTag("legalDocument"))).assertExists()
+        assertFalse(app.usageConsent.accepted.value)
+        compose.onNodeWithTag("closeLegalDocument").performClick()
         compose.onNodeWithTag("consentLicense").performScrollTo().performClick()
         compose.onNodeWithTag("legalDocument").assertIsDisplayed()
         compose.onNode(hasText("PolyForm Noncommercial", substring = true) and hasAnyAncestor(hasTestTag("legalDocument"))).assertExists()
@@ -86,7 +91,7 @@ class UsageConsentUiTest {
         ConsentFixtures.install(app)
         scenario = ActivityScenario.launch(MainActivity::class.java)
         compose.onNodeWithContentDescription("設定 分頁").performClick()
-        for (name in listOf("USAGE", "PRIVACY", "LICENSE")) {
+        for (name in listOf("GUIDE", "USAGE", "PRIVACY", "LICENSE")) {
             compose.onNodeWithTag("mainList").performScrollToNode(hasTestTag("legal:$name"))
             compose.onNodeWithTag("legal:$name").performClick()
             compose.onNodeWithTag("legalDocument").assertIsDisplayed()

@@ -21,8 +21,8 @@ class LineDrawApp : Application() {
     fun declineUsage() {
         usageConsent.decline()
         val service = DrawAccessibilityService.instance
-        if (service != null) service.halt("未同意使用聲明，已停止批次", true)
-        else scope.launch { ready.await(); repository.pause("未同意使用聲明，已停止批次", true) }
+        if (service != null) service.halt("未確認使用須知，已停止批次", true)
+        else scope.launch { ready.await(); repository.pause("未確認使用須知，已停止批次", true) }
     }
     override fun onCreate() {
         super.onCreate()

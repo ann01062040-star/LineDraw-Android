@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.linedraw.app.usage.UsageDeclaration
 
 enum class LegalDocument(val title: String) {
-    USAGE("使用聲明"), PRIVACY("隱私說明"), LICENSE("完整授權")
+    GUIDE("使用教學"), USAGE("使用須知"), PRIVACY("隱私說明"), LICENSE("完整授權")
 }
 
 @Composable
@@ -24,7 +24,8 @@ fun LegalDocumentDialog(document: LegalDocument, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val content = remember(document, context) {
         when (document) {
-            LegalDocument.USAGE -> UsageDeclaration.paragraphs.joinToString("\n\n")
+            LegalDocument.GUIDE -> context.assets.open("QUICK_START.txt").bufferedReader().use { it.readText() }
+            LegalDocument.USAGE -> UsageDeclaration.sections.joinToString("\n\n") { "${it.title}\n${it.body}" }
             LegalDocument.PRIVACY -> context.assets.open("PRIVACY.txt").bufferedReader().use { it.readText() }
             LegalDocument.LICENSE -> listOf("NOTICE.txt", "LICENSE.txt").joinToString("\n\n") { name ->
                 context.assets.open(name).bufferedReader().use { it.readText() }

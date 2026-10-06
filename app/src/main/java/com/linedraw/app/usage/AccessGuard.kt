@@ -8,7 +8,7 @@ interface AccessGuard {
     fun permits(permit: AccessPermit): Boolean
     fun <T> dispatch(permit: AccessPermit, action: () -> T): T
 }
-class AccessDenied : IllegalStateException("請先同意使用聲明；批次已保留")
+class AccessDenied : IllegalStateException("請先確認使用須知；批次已保留")
 object DenyAccess : AccessGuard {
     override suspend fun fresh(): AccessPermit = throw AccessDenied()
     override fun current(): AccessPermit? = null

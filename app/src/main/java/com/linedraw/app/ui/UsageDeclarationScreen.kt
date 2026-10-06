@@ -32,15 +32,21 @@ import com.linedraw.app.usage.UsageDeclaration
             listOf(Color(0xFFEAF2FF), Color(0xFFF5EFFB), Color(0xFFE9F6FF))))
             .safeDrawingPadding().padding(24.dp).testTag("usageDeclaration"),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("LINEDRAW", color = colors.primary, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, fontSize = 13.sp)
-            Text("使用聲明", color = colors.onBackground, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+            Text("LineDraw 獨立版", color = colors.primary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(UsageDeclaration.TITLE, color = colors.onBackground, fontWeight = FontWeight.Bold, fontSize = 28.sp)
             Surface(Modifier.weight(1f).fillMaxWidth().shadow(12.dp, RoundedCornerShape(28.dp)),
                 shape = RoundedCornerShape(28.dp), color = colors.surface.copy(alpha = if (opaque) 1f else .9f),
                 contentColor = colors.onSurface,
                 border = BorderStroke(1.dp, Color.White.copy(alpha = if (dark) .15f else 1f))) {
                 Column(Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    UsageDeclaration.paragraphs.forEach { Text(it, color = colors.onSurface, fontSize = 17.sp, lineHeight = 28.sp) }
+                    UsageDeclaration.sections.forEach { section ->
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(section.title, color = colors.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                            Text(section.body, color = colors.onSurface, fontSize = 17.sp, lineHeight = 28.sp)
+                        }
+                    }
+                    TextButton(onClick = { legalDocument = LegalDocument.GUIDE }, modifier = Modifier.testTag("consentGuide")) { Text("閱讀使用教學") }
                     TextButton(onClick = { legalDocument = LegalDocument.LICENSE }, modifier = Modifier.testTag("consentLicense")) { Text("閱讀完整授權") }
                     TextButton(onClick = { legalDocument = LegalDocument.PRIVACY }, modifier = Modifier.testTag("consentPrivacy")) { Text("閱讀隱私說明") }
                 }

@@ -10,8 +10,8 @@ android {
         applicationId = "com.linedraw.standalone"
         minSdk = 31
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.1.1-standalone"
+        versionCode = 3
+        versionName = "0.1.2-standalone"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "FIVE_LINK_TEST", "false")
         manifestPlaceholders["appLabel"] = "LineDraw 獨立版"
@@ -78,7 +78,7 @@ abstract class PrepareLegalAssets : DefaultTask() {
     }
 }
 val prepareLegalAssets by tasks.registering(PrepareLegalAssets::class) {
-    documents.from(rootProject.file("LICENSE"), rootProject.file("NOTICE"), rootProject.file("docs/PRIVACY.md"))
+    documents.from(rootProject.file("LICENSE"), rootProject.file("NOTICE"), rootProject.file("docs/PRIVACY.md"), rootProject.file("docs/QUICK_START.md"))
     outputDirectory.set(layout.buildDirectory.dir("generated/legalAssets"))
 }
 androidComponents.onVariants { variant ->

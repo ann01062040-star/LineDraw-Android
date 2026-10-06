@@ -261,7 +261,7 @@ class DrawAccessibilityService : AccessibilityService() {
                     }
                     delay(200)
                     } catch (e: AccessDenied) {
-                        repo.pause(e.message ?: "請先同意使用聲明")
+                        repo.pause(e.message ?: "請先確認使用須知")
                         break
                     }
                 }
