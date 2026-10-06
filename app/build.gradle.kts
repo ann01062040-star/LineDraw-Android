@@ -10,8 +10,8 @@ android {
         applicationId = "com.linedraw.standalone"
         minSdk = 31
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0-standalone"
+        versionCode = 2
+        versionName = "0.1.1-standalone"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "FIVE_LINK_TEST", "false")
         manifestPlaceholders["appLabel"] = "LineDraw 獨立版"
@@ -58,4 +58,29 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.5.2")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
+}
+
+// 從倉庫文件打包授權與隱私說明，確保離線也能閱讀同一份內容。
+abstract class PrepareLegalAssets : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val documents: ConfigurableFileCollection
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun prepare() {
+        val directory = outputDirectory.get().asFile
+        directory.mkdirs()
+        documents.files.forEach { file ->
+            file.copyTo(directory.resolve(file.nameWithoutExtension + ".txt"), overwrite = true)
+        }
+    }
+}
+val prepareLegalAssets by tasks.registering(PrepareLegalAssets::class) {
+    documents.from(rootProject.file("LICENSE"), rootProject.file("NOTICE"), rootProject.file("docs/PRIVACY.md"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/legalAssets"))
+}
+androidComponents.onVariants { variant ->
+    variant.sources.assets?.addGeneratedSourceDirectory(prepareLegalAssets) { it.outputDirectory }
 }

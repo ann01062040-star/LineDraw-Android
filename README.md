@@ -1,104 +1,269 @@
 # LineDraw Android 獨立版
 
-從 LineDraw Android `0.2.15-alpha` 分離出的獨立版本，只同步 [Funbox 公開抽選清單](https://uxux11.github.io/funbox-line/)。首次同意使用聲明後即可使用，不需要網站帳號或 VIP。
+**免費提供、原始碼公開、限非商業使用。** 此版本只同步 [Funbox 公開抽選清單](https://uxux11.github.io/funbox-line/)，不需要陀螺獵人網站帳號或 VIP。首次閱讀並確認使用聲明後，即可使用抽選輔助功能。
 
-目前版本：`0.1.0-standalone`，Android 12 以上。
+目前版本：**0.1.1-standalone**，支援 Android 12（API 31）以上。專案採 [PolyForm Noncommercial 1.0.0](LICENSE)，可依條款進行非商業使用、修改及散布；商業用途須另行取得授權。
 
-## 與原版的差異
+本文中的「獨立版／原始碼公開版」就是原先討論的免費「開源版」。由於保留非商業限制，本專案不是 OSI 定義的開源授權專案，對外統一使用上面的三項說明。[OSI 開源定義](https://opensource.org/osd)
 
-| 項目 | 此獨立版 |
+> **倉庫目前仍是 private，正在準備對外公開。** 下列 Releases、下載原始碼及 Issues 暫時需要受邀帳號存取；這次更新文件不會自動將倉庫改為 public。
+
+## 閱讀順序
+
+- 只想使用：從「下載 APK 與首次設定」開始，不需要 Android Studio。
+- 想自己編譯：依「取得原始碼 → 安裝開發環境 → 編譯 → 簽署／安裝」操作。
+- 想比較版本：先看下面的 VIP 版差異。
+- [使用聲明](docs/USAGE_DECLARATION.md)、[隱私說明](docs/PRIVACY.md)、[完整授權](LICENSE)、[版權通知](NOTICE)。App 內也能離線閱讀聲明、隱私與授權。
+
+## VIP 版本與獨立版本的差異
+
+比較基準為原 Android `0.2.15-alpha` 與本獨立版 `0.1.1-standalone`，不是對未來版本功能的承諾。
+
+| 項目 | 陀螺獵人 VIP 版 | 此獨立版／原始碼公開版 |
+| --- | --- | --- |
+| 使用資格 | 登入陀螺獵人網站，依伺服器回傳的會員資格開放使用 | 不需網站登入或 VIP；仍依活動有效期間及本機紀錄判斷可抽項目 |
+| 網站清單來源 | Funbox 與陀螺獵人官網，可切換 | 僅 Funbox |
+| 會員連線 | 包含登入、權杖保存、資格驗證與登入回跳 | 這些程式已移除，不會呼叫網站會員 API |
+| 同步與篩選 | 商品、地區、活動狀態可多選，另有搜尋 | 保留 |
+| 自動抽選 | 加入好友、抽選送出後接續下一筆、批次結束後檢查新增項目 | 保留，可依設定控制自動加入好友及自動接續 |
+| 抽過／活動結束 | 辨識已抽過、已領取、已結束等狀態並接續；異常需要本人處理時暫停 | 保留同一基底的規則，包括「抽獎期間已結束」 |
+| 紀錄 | 本機紀錄設定檔、手動標記完成及撤銷 | 保留；不與 VIP 版共享或自動匯入 |
+| 測試區 | 包含指定連結的實際 LINE 抽選測試區 | 保留；測試連結仍可能已抽過或過期 |
+| App 名稱 | LineDraw 網站同步 | LineDraw 獨立版 |
+| 安裝識別碼 | `com.linedraw.app` | `com.linedraw.standalone`，可並存 |
+| APK 取得方式 | 陀螺獵人網站的會員下載流程 | 本倉庫 Releases，或自行編譯 |
+| 程式授權 | 會員服務版本，不隨此倉庫釋出授權 | PolyForm Noncommercial 1.0.0；限非商業用途 |
+| 維護方式 | 依 VIP 服務自身說明 | 社群問題回報，不保證修復時程或個別教學 |
+
+兩版的主要差異是會員驗證、資料來源及發布方式；本獨立版並未刻意刪除既有批次、篩選或紀錄功能，也不宣稱 VIP 版一定比較快。之後兩個專案各自發布，某一版更新不代表另一版已同步。
+
+本倉庫只包含 Android App、模擬測試頁與測試程式，沒有網站後端、VIP 登入模組、VPS 部署工具或 iOS 專案。
+
+## 下載 APK 與首次設定
+
+1. 以有權限的帳號開啟 [Releases](https://github.com/beybladehunter/LineDraw-Android/releases)，選擇需要的版本。
+2. 在該版本的 **Assets** 下載 `LineDraw-0.1.1-standalone.apk`，不是 `Source code.zip`。後者是原始碼，不能直接安裝。
+3. 把 APK 傳到 Android 手機，使用檔案管理員開啟。若詢問是否允許此來源安裝，確認檔案來自本倉庫後再允許。
+4. 開啟「LineDraw 獨立版」，閱讀聲明與授權，按 **「我已了解，開始使用」**。不想繼續可按「離開 App」。聲明有重要更新時會再次顯示。
+5. 先在 LINE App 登入你要參加抽選的帳號。本工具不需要網站登入，但仍需使用你自己的 LINE 帳號。
+6. 到 App「設定 → 抽選輔助 → 無障礙服務 → 管理」，在 Android 系統頁找到 **LineDraw 獨立版抽選輔助**，開啟並確認系統提示。
+7. 若系統阻擋受限制的設定，通常需到 Android「設定 → 應用程式 → LineDraw 獨立版 → 更多選項 → 允許受限制的設定」，之後再啟用服務。各品牌路徑可能不同，請依系統畫面操作。[Android 官方說明](https://support.google.com/android/answer/12623953?hl=zh-Hant)
+8. 回到 App，確認無障礙服務顯示「已啟用」。不需要 root，也不需要連接電腦才能執行日常抽選。
+
+## 日常使用
+
+### 同步、選取與開始
+
+1. 在「抽選」分頁按「同步」，等待 Funbox 活動清單載入。同步失敗時會保留上次有效資料。
+2. 使用商品、地區、活動狀態多選或搜尋縮小清單。選取「尚未開始」只會顯示那些活動，不會讓它們提早成為可抽選項目。
+3. 勾選項目或使用「全選可抽選」。已有本機完成紀錄、過期或尚未開始的活動不會重新當作可抽項目。
+4. 在設定確認「自動加入店家好友」及「自動接續新增活動」是否符合你的需求，再開始批次。
+5. 保持螢幕解鎖、網路連線，讓 LINE 留在執行畫面；避免手動切換其他 App 或同時點擊。可用浮動控制列暫停、停止或略過目前項目。
+
+抽選操作送出後會直接開啟下一筆，不保證讀到最終中獎結果。「已送出」只代表操作已派送，是否抽中請自行查看 LINE。
+
+### 等待、略過與暫停
+
+- 頁面載入會等待並在需要時重開一次；仍無法完成時保留原因並接續，不會無限等待同一筆。
+- 顯示「已結束」或「抽獎期間已結束」會略過，並不算成功送出抽選。
+- 已抽過、已領取等明確畫面會依規則記錄並接續。
+- 遇到 LINE 登入、驗證碼、帳號問題或無法安全判斷的畫面，會暫停交給本人處理。移除的是本 App 的網站會員驗證，不是跳過 LINE 自身的安全要求。
+- 開啟自動接續時，本輪完成後會同步同一來源，沿用開始時的商品、地區、活動狀態及搜尋條件，最多額外接續 3 輪。這不是全天候排程工具。
+
+### 查看紀錄、手動完成與切換帳號
+
+- 「紀錄」分頁顯示送出、完成、已參加、待確認及手動完成等狀態，請依畫面證據判讀。
+- 已在 LINE 自行處理的項目可選「標記已完成」；誤標時用「撤銷手動完成」。這只更新本機紀錄，不會取消或重設 LINE 抽選。
+- 本機設定檔不等於 LINE 帳號。更換 LINE 帳號前，先停止批次，再到「設定 → 本機紀錄」新增或切換設定檔。
+- 「設定 → 抽選測試區」會操作真實 LINE 活動；既有連結可能已抽過或過期，並非重置抽選資格的工具。網站活動與測試區的紀錄分開保存。
+- 「設定 → 預覽診斷紀錄」可查看、清除或自行分享診斷；「使用說明與授權」可重新閱讀聲明、隱私說明及完整授權。
+
+## 取得原始碼
+
+可選擇下列任一方式：
+
+- **不熟悉 Git**：在 GitHub 倉庫頁按 **Code → Download ZIP**，解壓縮後保留整個資料夾結構。
+- **GitHub CLI**：安裝並登入 GitHub CLI 後執行：
+
+  ```bash
+  gh auth login
+  gh repo clone beybladehunter/LineDraw-Android
+  cd LineDraw-Android
+  ```
+
+- **Git**：先完成 GitHub 所需的帳號授權，再執行：
+
+  ```bash
+  git clone https://github.com/beybladehunter/LineDraw-Android.git
+  cd LineDraw-Android
+  ```
+
+倉庫仍為 private 時，未受邀帳號看到 404 或無法 clone 屬正常權限限制。不要把 GitHub 密碼、權杖或簽署金鑰寫進專案。
+
+## 安裝 Android Studio 與開發環境
+
+### 1. 安裝 Android Studio
+
+從 [Android Studio 官網](https://developer.android.com/studio) 下載對應 Windows、macOS 或 Linux 的版本，依安裝精靈完成初始設定。macOS 請依 Apple Silicon／Intel 選擇相符版本。若 IDE 明確表示不支援此專案的 AGP 版本，請更新至支援它的 Android Studio，不要先隨意降版專案依賴。[官方安裝教學](https://developer.android.com/studio/install)
+
+### 2. 開啟專案與安裝 SDK
+
+1. 在 Android Studio 歡迎畫面選 **Open**，指定包含 `settings.gradle.kts`、`gradlew` 的專案根目錄，不是單獨的 `app` 子目錄。
+2. 在 **Tools → SDK Manager** 安裝本專案使用的 **Android API 37 平台**、Android SDK Platform-Tools 與 Build-Tools。已驗證環境使用 API 37.0 平台及 Build-Tools 36.0.0；如 Gradle 明確要求其他套件，按提示補齊。
+3. 要跑模擬器才需要 Android Emulator 與對應系統映像；只編譯 APK 不必安裝模擬器。
+4. 等待 Gradle Sync 完成。第一次需要連線下載 Gradle、JDK 及 Maven 依賴，時間取決於網路。
+
+Android Studio 會建立本機 `local.properties`，內容指向 Android SDK 安裝位置；此檔不提交到 GitHub。
+
+### 3. 確認工具鏈
+
+| 設定 | 倉庫使用值 |
 | --- | --- |
-| 網站清單來源 | 僅 Funbox，沒有其他網站來源切換 |
-| 登入與 VIP | 已移除登入頁、會員 API、權杖儲存、資格檢查、驗證重試及登入回跳連結 |
-| 本機使用聲明 | 首次使用及聲明更新時確認；不同意就退出 |
-| 抽選流程 | 保留同步、商品／地區／活動狀態多選、自動加入好友、批次抽選、自動接續、紀錄與手動標記 |
-| 測試清單 | 保留原版的測試區與指定連結，是否有效以各活動頁為準 |
-| App 名稱 | LineDraw 獨立版 |
-| 安裝識別碼 | `com.linedraw.standalone` |
-| 原版資料 | 使用獨立儲存空間，可並存；不自動匯入原版資料或覆蓋原版 |
+| 最低手機系統 | Android 12 / API 31 |
+| compileSdk / targetSdk | 37 / 36 |
+| Gradle Wrapper | 9.5.0 |
+| Android Gradle Plugin | 9.3.0 |
+| Gradle Daemon JDK | 25，見 `gradle/gradle-daemon-jvm.properties` |
+| Kotlin／Java 編譯目標 | Java 17；Compose 外掛版本見根 Gradle 檔 |
 
-本倉庫只包含 Android App、模擬測試頁及測試程式。沒有網站後端、VPS 部署工具、部署密鑰或 iOS 專案。此版本不使用原 VIP 版的 APK 部署端點。
+Gradle 會依 Daemon 工具鏈設定尋找或下載 JDK 25。命令列啟動 Wrapper 仍需能找到 Java；優先使用 Android Studio 隨附 JBR 啟動，不要把「Java 編譯目標 17」誤認成「Gradle Daemon 必須用 17」。
 
-## 安裝與開始使用
-
-1. 在此私有倉庫的 **Releases** 下載 `LineDraw-0.1.0-standalone.apk`；需有倉庫存取權。
-2. 將 APK 傳至 Android 手機，開啟檔案，依系統提示允許該來源安裝。
-3. 開啟「LineDraw 獨立版」，閱讀並同意使用聲明。
-4. 確認手機已安裝 LINE，且已登入你要抽選的 LINE 帳號。此 App 不會代替 LINE 登入。
-5. 在 App「設定 → 無障礙服務 → 管理」啟用「LineDraw 獨立版抽選輔助」。若系統提示受限制的設定，先依手機的 App 資訊頁解除限制，再返回啟用。
-6. 回到抽選頁按「同步」。用商品、地區、活動狀態及搜尋篩選，選取要抽的活動後開始批次。
-7. 執行時保持手機解鎖與網路連線。浮動控制列可暫停、停止或略過目前項目。
-8. 完成後可在「紀錄」查看；送出狀態不代表中獎。更換 LINE 帳號時，請切換另一份本機紀錄設定檔。
-
-抽選頁顯示「已結束」或「抽獎期間已結束」會直接略過；已有領取／抽過的結果會記錄並接續。需要 LINE 登入、驗證碼或其他真正需要本人處理的畫面，仍會暫停。這些畫面規則與本 App 已移除的網站會員驗證不同。
-
-## 開發環境
-
-- [Android Studio](https://developer.android.com/studio) 與 Android SDK。
-- `compileSdk 37`、`targetSdk 36`、`minSdk 31`。
-- Gradle Wrapper `9.5.0`、Android Gradle Plugin `9.3.0`。
-- 本倉庫 Gradle Daemon 使用 JDK 25，設定位於 `gradle/gradle-daemon-jvm.properties`。若電腦沒有此版本，Gradle 會依其中工具鏈設定下載；需要網路。
-- Kotlin／Java 目標版本 17；依賴版本以 Gradle 檔案為準。
-
-首次使用時先透過 GitHub CLI 或 Git 登入有此私有倉庫權限的帳號，再複製專案：
+macOS 若終端找不到 Java，可在本次終端設定：
 
 ```bash
-gh repo clone beybladehunter/LineDraw-Android
-cd LineDraw-Android
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+./gradlew --version
 ```
 
-用 Android Studio 開啟專案根目錄，依提示安裝 SDK 與同步 Gradle。Android Studio 會產生本機 `local.properties`；請勿提交此檔。
+Windows 可在 Android Studio 的 Terminal 執行，若仍找不到 Java，將 `JAVA_HOME` 指向 Android Studio 安裝目錄下的 `jbr`，重新開啟終端。Gradle Daemon 找不到 25 時，可在 IDE 的 JDK 下載功能安裝 JDK 25；最終以 `gradlew --version` 與 Sync 訊息確認。
 
-純命令列使用者可在 `local.properties` 設定 `sdk.dir` 為自己的 SDK 絕對路徑。macOS 的常見位置是 `/Users/你的帳號/Library/Android/sdk`。
+## 編譯可安裝的測試 APK
 
-## 編譯與簽署
+預設 **debug 就是完整的 Funbox 獨立版**；不要誤選只有指定測試清單的 `pilot`。
+
+macOS／Linux，在專案根目錄執行：
 
 ```bash
+chmod +x gradlew
 ./gradlew :app:assembleDebug
 ```
 
-輸出：`app/build/outputs/apk/debug/app-debug.apk`。預設 `debug` 是完整 Funbox 獨立版，Android 工具會以本機 debug 憑證簽署，可直接安裝。
+Windows PowerShell：
 
-```bash
-adb -s 裝置序號 install -r app/build/outputs/apk/debug/app-debug.apk
+```powershell
+.\gradlew.bat :app:assembleDebug
 ```
 
-更新同一份安裝需要相同的簽署憑證。不同電腦各自產生的 debug 憑證通常不同；請保存自己的憑證，或使用同一發布來源的 APK。不要為了解決簽章不符而直接移除有重要紀錄的 App，移除會刪除其本機資料。
+看到 **BUILD SUCCESSFUL** 後，輸出位於：
 
-要正式簽署時，在 Android Studio 選擇 **Build → Generate Signed App Bundle or APK → APK**，建立或選取自己的 keystore，選擇 `release`。將金鑰與密碼留在專案外，勿提交到 GitHub。命令列 `:app:assembleRelease` 會產生尚未簽署的 APK，必須簽署後才能安裝。
-
-可選的 `pilot` 建置只載入測試清單，識別碼為 `com.linedraw.standalone.pilot`：
-
-```bash
-./gradlew :app:assemblePilot
+```text
+app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 測試
+此 APK 已以本機 Android debug 憑證簽署，可直接安裝。若使用 Android Studio 圖形介面，將 Build Variant 設為 `debug`，透過 Build APK 選項建置，或直接用 **Run → Run 'app'** 安裝至所選裝置。
 
-單元測試與靜態檢查：
+其他建置：
+
+| 用途 | Gradle 任務 | 輸出 | 識別碼 |
+| --- | --- | --- | --- |
+| 完整測試版 | `:app:assembleDebug` | `app/build/outputs/apk/debug/app-debug.apk` | `com.linedraw.standalone` |
+| 指定連結測試版 | `:app:assemblePilot` | `app/build/outputs/apk/pilot/app-pilot.apk` | `com.linedraw.standalone.pilot` |
+| 未簽署 Release | `:app:assembleRelease` | `app/build/outputs/apk/release/app-release-unsigned.apk` | `com.linedraw.standalone` |
+
+Release 尚未簽署時不能直接安裝；下一節說明簽署。
+
+## 簽署自己的 Release APK
+
+1. 在 Android Studio 選 **Build → Generate Signed App Bundle or APK**，選 **APK**。
+2. 選擇 `app` 模組；第一次可按 **Create new** 建立自己的 keystore，已有金鑰則使用原檔。
+3. 將 keystore 放在專案外，保存檔案、alias、密碼及備份。不要上傳到 GitHub 或寄到 Issues。
+4. 選擇 **release** variant，依精靈完成建置。
+5. 在完成通知按 **Locate** 找到已簽署 APK；精靈的輸出位置以你當次選擇為準。
+
+後續更新同一份安裝必須使用相同的簽署憑證，並提高 `app/build.gradle.kts` 的 `versionCode`。`versionName` 是給使用者看的版本名稱。正式使用時應持續保管自己的 release 金鑰。[Android 官方簽署說明](https://developer.android.com/studio/publish/app-signing)
+
+本倉庫目前 Releases 提供以維護者本機 debug 憑證簽署的測試 APK。你在另一台電腦自行編譯的 debug APK 通常使用不同憑證，不能保證能覆蓋該安裝；不要為了處理簽章不符直接移除有重要紀錄的 App。App 目前沒有完整資料匯出／還原功能，移除或清除資料會遺失紀錄。
+
+## 將 APK 安裝到手機
+
+可直接傳送 APK 至手機安裝，或使用 USB：
+
+1. 在手機「關於手機」開啟開發者選項，進入開發者選項啟用 **USB 偵錯**。
+2. 接上可傳輸資料的 USB 線，保持手機解鎖，確認手機上的「允許 USB 偵錯」提示。部分品牌另要求允許「透過 USB 安裝」。
+3. 在 Android Studio 選擇該裝置後按 Run；或在命令列執行：
+
+   ```bash
+   adb devices -l
+   adb -s 你的裝置序號 install -r app/build/outputs/apk/debug/app-debug.apk
+   ```
+
+4. 出現 `Success` 後，在手機開啟「LineDraw 獨立版」，依前述首次設定開啟無障礙服務。
+
+若找不到 `adb`，使用 SDK Manager 顯示的 SDK 路徑下 `platform-tools/adb`（Windows 為 `adb.exe`），或將該資料夾加入 PATH。[ADB 官方說明](https://developer.android.com/tools/adb)
+
+## 更新原始碼與安裝新版
+
+使用 Git 且沒有待保存修改時，在根目錄執行 `git pull --ff-only`，重新 Sync、編譯，再以相同簽章覆蓋安裝。若自己改過程式，先提交或保存修改，不要用重設指令丟掉它們。
+
+VIP 版與獨立版可並存，但資料及無障礙服務各自獨立。測試其中一版時，請停止另一版的批次，避免同時操作同一個 LINE 畫面。
+
+## 常見問題
+
+| 狀況 | 處理方式 |
+| --- | --- |
+| GitHub 404／沒有 Releases | 目前是私有倉庫，確認登入受邀帳號 |
+| `SDK location not found` | 用 Android Studio 開啟根目錄，確認 SDK Manager 位置及 `local.properties` |
+| 找不到 API 37／平台套件 | 在 SDK Manager 補齊 API 37 平台，重新 Sync |
+| 找不到 Java／JDK 版本不符 | 檢查 `JAVA_HOME`、IDE JDK 與 Daemon JDK 25 設定 |
+| Gradle 下載失敗 | 檢查網路、代理及憑證；修正後重試，不必先刪除整個專案 |
+| `unauthorized`／`offline` | 解鎖手機、重新插拔並確認 USB 偵錯提示 |
+| `INSTALL_FAILED_USER_RESTRICTED` | 檢查手機是否允許 USB 安裝，並確認手機上的安裝提示 |
+| `INSTALL_FAILED_UPDATE_INCOMPATIBLE` | 已安裝版本與新 APK 簽章不同；確認原簽章，不要直接移除有重要資料的 App |
+| `INSTALL_FAILED_VERSION_DOWNGRADE` | 新 APK 的 versionCode 比已安裝版低，使用較新版本；避免強制降版 |
+| 無法啟用無障礙 | 檢查受限制的設定，以及是否開啟了正確的獨立版服務 |
+| 同步失敗／清單空白 | 檢查網路與 Funbox 頁面，再查看同步錯誤；保留診斷供回報 |
+| 執行中暫停 | 先看浮動列或 App 原因，處理 LINE 登入／驗證等必要步驟後再繼續 |
+| 抽選頁顯示已抽過 | 換 APK、本機設定檔或重裝都不會重置 LINE 端抽選資格 |
+
+## 測試與驗證
+
+單元測試及靜態檢查：
 
 ```bash
 ./gradlew :app:testDebugUnitTest :app:lintDebug :app:lintPilot
 ```
 
-模擬器流程測試使用 `fixture` App，不會抽真實 LINE 活動。先建立名稱以 `LineDraw_` 開頭的專用 Android 16 模擬器並啟動，再執行：
+Windows 將 `./gradlew` 換成 `.\gradlew.bat`。測試輸出可在 `app/build/reports/` 查看。
+
+模擬器流程測試需建立名稱以 `LineDraw_` 開頭的專用 Android 16 AVD，啟動後在 macOS／Linux 執行：
 
 ```bash
 ANDROID_SERIAL=emulator-5554 ./scripts/test-emulator.sh
 ```
 
-腳本會安裝 fixture，清除專用模擬器內的測試頁資料並重設無障礙服務，僅限可拋棄的測試模擬器。它會拒絕實體手機及非專用 AVD。預設執行聲明、主要介面、測試區、已結束接續、加入好友及驗證碼暫停等流程。
+將序號改成 `adb devices` 顯示的那一台。腳本會安裝 `fixture`，清除其測試資料並重設無障礙服務，只能用在可拋棄的專用模擬器。它拒絕實體手機與非專用 AVD，使用模擬活動，不會送出真實 LINE 抽選。
 
-`CatalogNetworkTest` 需明確指定 `-Pandroid.testInstrumentationRunnerArguments.linedraw.liveCatalog=true` 才會讀取即時 Funbox 頁面；其餘測試使用保存的 HTML 或本機 fixture。驗證紀錄見 [docs/VALIDATION.md](docs/VALIDATION.md)。
+即時網頁測試需明確指定 instrumentation 參數 `linedraw.liveCatalog=true`；其他測試使用本機 fixture 或保存的 HTML。初版驗證見 [0.1.0 紀錄](docs/VALIDATION.md)，本次更新見 [0.1.1 紀錄](docs/VALIDATION_0.1.1.md)。模擬器測試不代表每款真機皆已驗證。
+
+## 回報問題與維護範圍
+
+先閱讀教學及常見問題。仍無法解決時，請在 [GitHub Issues](https://github.com/beybladehunter/LineDraw-Android/issues) 提供 App 版本、手機型號、Android／LINE 版本、重現步驟、預期與實際結果，必要時附上自行檢查過的診斷。
+
+維護者於能力範圍內回覆，不承諾固定支援時段、修復期限、所有機型相容性或個別安裝教學。請勿在回報中公開帳密、權杖、驗證碼或私人聊天。
+
+## 授權與散布
+
+- 專案程式採 **PolyForm Noncommercial 1.0.0**。非商業用途的使用、修改與散布依 [LICENSE](LICENSE) 辦理；「免費下載」不等於允許商業利用。
+- 商業用途須另行取得授權，請向 GitHub 帳號 `beybladehunter` 聯繫說明預定用途。是否收費不是判定商業用途的唯一條件；不確定時先取得確認。
+- 散布時保留授權條款或其網址，以及 [NOTICE](NOTICE) 中的 Required Notice；不要把修改版冒充維護者發布的版本。
+- 第三方套件、工具、名稱、商標及活動內容各有其權利與授權，不因本專案使用 PolyForm 而改變。
+- 本授權只適用於此倉庫所提供且有權授權的程式，不自動涵蓋陀螺獵人網站、VIP 版或其他未提供於此的專案。
+- 使用告知與原始碼授權分開：App 的聲明用於說明自動操作、資料及維護範圍，不代替 LICENSE 全文。
 
 ## 原始碼導覽
 
-- `app/src/main/java/com/linedraw/app/data/`：Funbox 解析、同步、資料庫、篩選、紀錄與佇列。
-- `app/src/main/java/com/linedraw/app/engine/`：無障礙操作、畫面判斷、重試及 LINE 連結開啟。
-- `app/src/main/java/com/linedraw/app/usage/`：只保留本機使用聲明同意檢查，不做網路身分驗證。
-- `app/src/main/java/com/linedraw/app/ui/`：液態玻璃風格 Compose 介面。
-- `fixture/`：原生／WebView 抽選流程測試頁。
-
-## 授權
-
-沿用 PolyForm Noncommercial 1.0.0，詳見 [LICENSE](LICENSE)。此 GitHub 倉庫保持 private，僅開放給受邀協作者。
+- `app/src/main/java/com/linedraw/app/data/`：Funbox 解析、同步、資料庫、篩選、紀錄及佇列。
+- `app/src/main/java/com/linedraw/app/engine/`：無障礙操作、畫面判斷、等待與連結開啟。
+- `app/src/main/java/com/linedraw/app/usage/`：本機聲明確認，不做網站會員驗證。
+- `app/src/main/java/com/linedraw/app/ui/`：Compose 液態玻璃介面與授權閱讀視窗。
+- `fixture/`：原生／WebView 測試頁。

@@ -111,6 +111,7 @@ fun LineDrawScreen(app: LineDrawApp, currentTimeMillis: () -> Long = System::cur
     var showPermission by remember { mutableStateOf(false) }
     var showProfile by remember { mutableStateOf(false) }
     var showProducts by rememberSaveable { mutableStateOf(false) }
+    var legalDocument by remember { mutableStateOf<LegalDocument?>(null) }
     var diagnostic by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
@@ -318,12 +319,20 @@ fun LineDrawScreen(app: LineDrawApp, currentTimeMillis: () -> Long = System::cur
                                 Text(if(fiveLinks) "來源：使用者指定的 ${TestCatalog.links.size} 個測試連結" else "來源：${websiteCatalog.label}（${websiteCatalog.url}）",fontSize=12.sp,color=colors.onSurfaceVariant)
                                 Text("LineDraw ${BuildConfig.VERSION_NAME} · Android 12+",fontSize=12.sp,color=colors.onSurfaceVariant)
                             } }
+                            item { SectionLabel("使用說明與授權") }
+                            item { CardBox {
+                                Text("免費提供・原始碼公開・限非商業使用", fontWeight=FontWeight.Bold)
+                                LegalDocument.entries.forEach { document ->
+                                    TextButton(onClick={legalDocument=document},modifier=Modifier.testTag("legal:${document.name}")) { Text(document.title) }
+                                }
+                            } }
                             if(BuildConfig.DEBUG && !fiveLinks) item { CardBox {
                                 SettingToggle("模擬測試模式", "需要另外安裝 LineDraw 測試頁 APK",demo,!locked) { value -> runTask { if(value) repo.seedDemo(); demo=value; prefs.edit().putBoolean("demo",value).apply(); selected=emptyList();cities=emptyList();statuses=emptyList() } }
                             } }
                         }
                     }
                 }
+                legalDocument?.let { LegalDocumentDialog(it) { legalDocument = null } }
                 if(showProducts) {
                     val otherFilters = catalogFilter.copy(products=emptySet())
                     val options = ProductCatalog.options(

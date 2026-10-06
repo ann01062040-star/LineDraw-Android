@@ -30,10 +30,10 @@ class UsageConsentTest {
         assertFalse(consent.accepted.value); assertFalse(UsageConsent(prefs).accepted.value)
     }
     @Test fun changedDeclarationRequiresNewConsent() {
-        val old = UsageConsent(prefs, 1); old.accept()
-        val revised = UsageConsent(prefs, 2)
+        val old = UsageConsent(prefs, UsageDeclaration.VERSION - 1); old.accept()
+        val revised = UsageConsent(prefs, UsageDeclaration.VERSION)
         assertFalse(revised.accepted.value)
-        assertTrue(revised.accept()); assertTrue(UsageConsent(prefs, 2).accepted.value)
+        assertTrue(revised.accept()); assertTrue(UsageConsent(prefs, UsageDeclaration.VERSION).accepted.value)
     }
     @Test fun failedPersistenceDoesNotGrantAccess() {
         val failed = object : SharedPreferences by prefs {

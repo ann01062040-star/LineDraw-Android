@@ -5,7 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -18,6 +18,7 @@ import com.linedraw.app.usage.UsageDeclaration
 
 @Composable fun UsageDeclarationScreen(dark: Boolean, opaque: Boolean, error: String,
     onAccept: () -> Unit, onDecline: () -> Unit) {
+    var legalDocument by remember { mutableStateOf<LegalDocument?>(null) }
     BackHandler(onBack = onDecline)
     val colors = if (dark) darkColorScheme(primary = Color(0xFFAAC9FF), onPrimary = Color(0xFF08254D),
         background = Color(0xFF0F1726), onBackground = Color(0xFFF5F7FC),
@@ -40,17 +41,20 @@ import com.linedraw.app.usage.UsageDeclaration
                 Column(Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)) {
                     UsageDeclaration.paragraphs.forEach { Text(it, color = colors.onSurface, fontSize = 17.sp, lineHeight = 28.sp) }
+                    TextButton(onClick = { legalDocument = LegalDocument.LICENSE }, modifier = Modifier.testTag("consentLicense")) { Text("閱讀完整授權") }
+                    TextButton(onClick = { legalDocument = LegalDocument.PRIVACY }, modifier = Modifier.testTag("consentPrivacy")) { Text("閱讀隱私說明") }
                 }
             }
             if (error.isNotBlank()) Text(error, color = colors.error)
             Button(onClick = onAccept, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("acceptUsage")) {
-                Text("同意並繼續")
+                Text("我已了解，開始使用")
             }
             OutlinedButton(onClick = onDecline, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("declineUsage"),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.onBackground),
                 border = BorderStroke(1.dp, colors.onBackground.copy(alpha = .5f))) {
-                Text("不同意，離開 App")
+                Text("離開 App")
             }
         }
+        legalDocument?.let { LegalDocumentDialog(it) { legalDocument = null } }
     }
 }

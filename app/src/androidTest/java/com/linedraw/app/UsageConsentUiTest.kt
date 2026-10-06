@@ -34,7 +34,16 @@ class UsageConsentUiTest {
         compose.onNodeWithTag("usageDeclaration").assertIsDisplayed()
         compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
         for (paragraph in UsageDeclaration.paragraphs) compose.onNodeWithText(paragraph).performScrollTo().assertIsDisplayed()
-        compose.onNodeWithTag("acceptUsage").performClick()
+        compose.onNodeWithTag("consentLicense").performScrollTo().performClick()
+        compose.onNodeWithTag("legalDocument").assertIsDisplayed()
+        compose.onNode(hasText("PolyForm Noncommercial", substring = true) and hasAnyAncestor(hasTestTag("legalDocument"))).assertExists()
+        assertFalse(app.usageConsent.accepted.value)
+        compose.onNodeWithTag("closeLegalDocument").performClick()
+        compose.onNodeWithTag("consentPrivacy").performScrollTo().performClick()
+        compose.onNodeWithTag("legalDocument").assertIsDisplayed()
+        compose.onNode(hasText("本機資料", substring = true) and hasAnyAncestor(hasTestTag("legalDocument"))).assertExists()
+        compose.onNodeWithTag("closeLegalDocument").performClick()
+        compose.onNodeWithTag("acceptUsage").assertTextEquals("我已了解，開始使用").performClick()
         compose.onNodeWithTag("mainList").assertIsDisplayed()
         compose.onNodeWithTag("websiteLogin").assertDoesNotExist()
         assertTrue(app.usageConsent.accepted.value)
@@ -72,5 +81,17 @@ class UsageConsentUiTest {
         compose.onNodeWithTag("acceptUsage").performClick()
         compose.onNodeWithTag("mainList").assertIsDisplayed()
         assertNotNull(app.access.current())
+    }
+    @Test fun settingsDocumentsCanBeReadWithoutChangingAgreement() = runBlocking {
+        ConsentFixtures.install(app)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithContentDescription("設定 分頁").performClick()
+        for (name in listOf("USAGE", "PRIVACY", "LICENSE")) {
+            compose.onNodeWithTag("mainList").performScrollToNode(hasTestTag("legal:$name"))
+            compose.onNodeWithTag("legal:$name").performClick()
+            compose.onNodeWithTag("legalDocument").assertIsDisplayed()
+            compose.onNodeWithTag("closeLegalDocument").performClick()
+            assertTrue(app.usageConsent.accepted.value)
+        }
     }
 }
