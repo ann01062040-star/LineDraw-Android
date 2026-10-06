@@ -6,7 +6,7 @@
 
 本文中的「獨立版／原始碼公開版」就是原先討論的免費「開源版」。由於保留非商業限制，本專案不是 OSI 定義的開源授權專案，對外統一使用上面的三項說明。[OSI 開源定義](https://opensource.org/osd)
 
-> **倉庫目前仍是 private，正在準備對外公開。** 下列 Releases、下載原始碼及 Issues 暫時需要受邀帳號存取；這次更新文件不會自動將倉庫改為 public。
+> **倉庫已公開。** 不需登入即可閱讀教學、取得原始碼及下載 Releases 中的 APK；提出 Issues 需登入 GitHub。授權仍為 PolyForm Noncommercial 1.0.0，限非商業使用。
 
 ## 閱讀順序
 
@@ -42,7 +42,7 @@
 
 ## 下載 APK 與首次設定
 
-1. 以有權限的帳號開啟 [Releases](https://github.com/beybladehunter/LineDraw-Android/releases)，選擇需要的版本。
+1. 直接開啟 [Releases](https://github.com/beybladehunter/LineDraw-Android/releases)，選擇需要的版本，不需 GitHub 帳號。
 2. 在該版本的 **Assets** 下載 `LineDraw-0.1.2-standalone.apk`，不是 `Source code.zip`。後者是原始碼，不能直接安裝。
 3. 把 APK 傳到 Android 手機，使用檔案管理員開啟。若詢問是否允許此來源安裝，確認檔案來自本倉庫後再允許。
 4. 開啟「LineDraw 獨立版」，閱讀使用須知與授權，按 **「我已了解，開始使用」**。不想繼續可按「離開 App」。使用須知有重要更新時會再次顯示。
@@ -132,14 +132,14 @@
   cd LineDraw-Android
   ```
 
-- **Git**：先完成 GitHub 所需的帳號授權，再執行：
+- **Git**：無需登入即可複製公開程式碼，執行：
 
   ```bash
   git clone https://github.com/beybladehunter/LineDraw-Android.git
   cd LineDraw-Android
   ```
 
-倉庫仍為 private 時，未受邀帳號看到 404 或無法 clone 屬正常權限限制。不要把 GitHub 密碼、權杖或簽署金鑰寫進專案。
+公開原始碼及 APK 可直接下載；回報 Issues 或透過 GitHub 提交修改時才需要帳號。不要把 GitHub 密碼、權杖或簽署金鑰寫進專案。
 
 ## 安裝 Android Studio 與開發環境
 
@@ -252,7 +252,7 @@ VIP 版與獨立版可並存，但資料及無障礙服務各自獨立。測試�
 
 | 狀況 | 處理方式 |
 | --- | --- |
-| GitHub 404／沒有 Releases | 目前是私有倉庫，確認登入受邀帳號 |
+| GitHub 404／沒有 Releases | 確認網址為 `beybladehunter/LineDraw-Android`，並由倉庫的 Releases 入口選擇有效版本；公開下載不需要受邀帳號 |
 | `SDK location not found` | 用 Android Studio 開啟根目錄，確認 SDK Manager 位置及 `local.properties` |
 | 找不到 API 37／平台套件 | 在 SDK Manager 補齊 API 37 平台，重新 Sync |
 | 找不到 Java／JDK 版本不符 | 檢查 `JAVA_HOME`、IDE JDK 與 Daemon JDK 25 設定 |

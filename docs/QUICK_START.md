@@ -58,4 +58,4 @@ Google 官方說明：https://support.google.com/android/answer/12623953?hl=zh-H
 
 完整教學與問題回報：https://github.com/beybladehunter/LineDraw-Android
 
-倉庫目前為 private，GitHub 頁面須有存取權限；本教學已隨 App 打包，可離線閱讀。
+倉庫已公開，不需登入即可閱讀教學、取得原始碼及下載 APK；回報 Issues 需登入 GitHub。本教學隨 App 打包，可離線閱讀。
