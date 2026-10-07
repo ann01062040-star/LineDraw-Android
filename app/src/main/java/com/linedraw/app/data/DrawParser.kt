@@ -25,13 +25,17 @@ class DrawParser {
                     row.attr("role") == "link" || row.select("a[href], button").isNotEmpty()
                 val labelOnly = row.selectFirst(".draw-product")?.text()?.trim().orEmpty()
                 if (!actionable && labelOnly.isNotEmpty() && labelOnly.length < 500) return@rowLoop
-                require(row.hasAttr("data-draw-id") && row.hasAttr("data-draw-href")) { "部分抽選列缺漏身份或網址" }
-                val id = row.attr("data-draw-id").trim()
+                require(row.hasAttr("data-draw-href")) { "部分抽選列缺漏網址" }
                 val url = row.attr("data-draw-href").trim()
                 val product = row.selectFirst(".draw-product")?.text()?.trim().orEmpty()
-                require(id.isNotEmpty() && sourceIds.add(id)) { "來源 ID 空白或重複" }
                 require(product.isNotEmpty() && product.length < 500 && name.length < 200) { "商品資料不完整" }
                 val key = LinkPolicy.activityKey(url, name, start?.toString() ?: label)
+                // 來源有些活動只提供網址。缺少 ID 時以內容產生穩定識別，不依賴排序或同步時間。
+                // 活動紀錄仍使用既有 activityKey；來源日後補回 ID 也不會重抽同一活動。
+                val id = row.attr("data-draw-id").trim().ifBlank {
+                    "generated-" + digest(listOf(name, url, product, start?.toString() ?: label).joinToString("\u0000"))
+                }
+                require(sourceIds.add(id)) { "來源 ID 重複" }
                 result += Draw("$id:${digest(url).take(16)}", id, key, name, city, product, url, label, start, end, result.size, syncedAt = now)
             }
         }

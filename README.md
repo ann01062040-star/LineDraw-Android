@@ -2,11 +2,13 @@
 
 **免費提供、原始碼公開、限非商業使用。** 此版本只同步 [Funbox 公開抽選清單](https://uxux11.github.io/funbox-line/)，不需要陀螺獵人網站帳號或 VIP。首次閱讀並確認使用須知後，即可使用抽選輔助功能。
 
-目前版本：**0.1.2-standalone**，支援 Android 12（API 31）以上。專案採 [PolyForm Noncommercial 1.0.0](LICENSE)，可依條款進行非商業使用、修改及散布；商業用途須另行取得授權。
+目前版本：**0.1.3-standalone**，支援 Android 12（API 31）以上。專案採 [PolyForm Noncommercial 1.0.0](LICENSE)，可依條款進行非商業使用、修改及散布；商業用途須另行取得授權。
 
 本文中的「獨立版／原始碼公開版」就是原先討論的免費「開源版」。由於保留非商業限制，本專案不是 OSI 定義的開源授權專案，對外統一使用上面的三項說明。[OSI 開源定義](https://opensource.org/osd)
 
 > **倉庫已公開。** 不需登入即可閱讀教學、取得原始碼及下載 Releases 中的 APK；提出 Issues 需登入 GitHub。授權仍為 PolyForm Noncommercial 1.0.0，限非商業使用。
+
+0.1.3 修正 Funbox 部分活動缺少來源 ID 時，整份清單同步失敗的問題。現在會為資料完整的活動建立穩定識別，保留既有已抽紀錄；不完整或無效網址仍會擋下。[本次驗證](docs/VALIDATION_0.1.3.md)。
 
 ## 閱讀順序
 
@@ -18,7 +20,7 @@
 
 ## VIP 版本與獨立版本的差異
 
-比較基準為原 Android `0.2.15-alpha` 與本獨立版 `0.1.2-standalone`，不是對未來版本功能的承諾。
+比較基準為 Android VIP `0.2.16-alpha` 與本獨立版 `0.1.3-standalone`，不是對未來版本功能的承諾。
 
 | 項目 | 陀螺獵人 VIP 版 | 此獨立版／原始碼公開版 |
 | --- | --- | --- |
@@ -43,7 +45,7 @@
 ## 下載 APK 與首次設定
 
 1. 直接開啟 [Releases](https://github.com/beybladehunter/LineDraw-Android/releases)，選擇需要的版本，不需 GitHub 帳號。
-2. 在該版本的 **Assets** 下載 `LineDraw-0.1.2-standalone.apk`，不是 `Source code.zip`。後者是原始碼，不能直接安裝。
+2. 在該版本的 **Assets** 下載 `LineDraw-0.1.3-standalone.apk`，不是 `Source code.zip`。後者是原始碼，不能直接安裝。
 3. 把 APK 傳到 Android 手機，使用檔案管理員開啟。若詢問是否允許此來源安裝，確認檔案來自本倉庫後再允許。
 4. 開啟「LineDraw 獨立版」，閱讀使用須知與授權，按 **「我已了解，開始使用」**。不想繼續可按「離開 App」。使用須知有重要更新時會再次顯示。
 5. 先在 LINE App 登入你要參加抽選的帳號。本工具不需要網站登入，但仍需使用你自己的 LINE 帳號。
@@ -284,7 +286,7 @@ ANDROID_SERIAL=emulator-5554 ./scripts/test-emulator.sh
 
 將序號改成 `adb devices` 顯示的那一台。腳本會安裝 `fixture`，清除其測試資料並重設無障礙服務，只能用在可拋棄的專用模擬器。它拒絕實體手機與非專用 AVD，使用模擬活動，不會送出真實 LINE 抽選。
 
-即時網頁測試需明確指定 instrumentation 參數 `linedraw.liveCatalog=true`；其他測試使用本機 fixture 或保存的 HTML。初版驗證見 [0.1.0 紀錄](docs/VALIDATION.md)，0.1.1 更新見 [驗證紀錄](docs/VALIDATION_0.1.1.md)，本次更新見 [0.1.2 紀錄](docs/VALIDATION_0.1.2.md)。模擬器測試不代表每款真機皆已驗證。
+即時網頁測試需明確指定 instrumentation 參數 `linedraw.liveCatalog=true`；其他測試使用本機 fixture 或保存的 HTML。初版驗證見 [0.1.0 紀錄](docs/VALIDATION.md)，0.1.1 更新見 [驗證紀錄](docs/VALIDATION_0.1.1.md)，使用須知更新見 [0.1.2 紀錄](docs/VALIDATION_0.1.2.md)，本次來源修正見 [0.1.3 紀錄](docs/VALIDATION_0.1.3.md)。模擬器測試不代表每款真機皆已驗證。
 
 ## 回報問題與維護範圍
 

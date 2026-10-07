@@ -42,8 +42,8 @@ class ParserTest {
         val rows=DrawParser().parse(source)
         assertEquals(1,rows.size);assertEquals("draw-a",rows.single().sourceId);assertEquals(0,rows.single().ordinal)
     }
-    @Test fun actionableRowsMissingIdentityStillRejectWholePage() {
-        val badRows=listOf("data-draw-id=\"bad\"", "data-draw-href=\"https://lin.ee/bad\"", "onclick=\"openDraw()\"", "role=\"link\"")
+    @Test fun actionableRowsMissingUrlStillRejectWholePage() {
+        val badRows=listOf("data-draw-id=\"bad\"", "onclick=\"openDraw()\"", "role=\"link\"")
         badRows.forEach { marker ->
             val bad="<div class=\"draw-item\" $marker><div class=\"draw-product\">抽選</div></div>"
             assertThrows(IllegalArgumentException::class.java) { DrawParser().parse(html().replace("</div></div>","</div>$bad</div>")) }

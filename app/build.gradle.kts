@@ -10,8 +10,8 @@ android {
         applicationId = "com.linedraw.standalone"
         minSdk = 31
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.1.2-standalone"
+        versionCode = 4
+        versionName = "0.1.3-standalone"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "FIVE_LINK_TEST", "false")
         manifestPlaceholders["appLabel"] = "LineDraw 獨立版"
